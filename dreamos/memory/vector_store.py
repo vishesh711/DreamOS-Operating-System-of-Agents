@@ -33,6 +33,10 @@ class VectorStore:
         # Embedding dimension - this should match your embedding model
         self.embedding_dim = 768  # for Groq embeddings
         
+        # Initialize metadata and index to default values before loading
+        self.metadata = []
+        self.index = None
+        
         # Initialize or load the vector index and metadata
         self.index, self.metadata = self._load_or_create_store()
     
@@ -78,8 +82,8 @@ class VectorStore:
         # Create empty metadata list
         metadata = []
         
-        # Save the empty store
-        self._save_store(index, metadata)
+        # Save the empty store - passing explicit values to avoid using self attributes
+        self._save_store(index=index, metadata=metadata)
         
         return index, metadata
     
@@ -91,8 +95,17 @@ class VectorStore:
             index: FAISS index to save (or use self.index)
             metadata: Metadata list to save (or use self.metadata)
         """
-        index = index or self.index
-        metadata = metadata or self.metadata
+        # Use provided values if given, otherwise use instance attributes
+        # But don't attempt to use self.index or self.metadata if they're None
+        if index is None and hasattr(self, 'index') and self.index is not None:
+            index = self.index
+        
+        if metadata is None and hasattr(self, 'metadata') and self.metadata is not None:
+            metadata = self.metadata
+            
+        # Ensure we have valid values to save
+        if index is None or metadata is None:
+            raise ValueError("Cannot save store: missing index or metadata")
         
         # Create directory if it doesn't exist
         os.makedirs(self.vector_db_path, exist_ok=True)

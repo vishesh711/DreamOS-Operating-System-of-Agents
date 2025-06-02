@@ -23,7 +23,7 @@ PSEUDO_FILES_PATH = os.getenv("PSEUDO_FILES_PATH", str(BASE_DIR / "memory" / "ps
 LOG_DIR = os.getenv("LOG_DIR", str(BASE_DIR / "logs"))
 
 # LLM Configuration
-LLM_MODEL = os.getenv("LLM_MODEL", "mixtral-8x7b-32768")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama-3.1-70b-versatile")
 
 # Runtime Settings
 DEBUG_MODE = os.getenv("DEBUG_MODE", "false").lower() == "true"

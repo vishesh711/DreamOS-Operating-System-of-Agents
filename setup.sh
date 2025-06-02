@@ -38,6 +38,35 @@ $PYTHON -m pip install -r requirements.txt
 
 # Set up environment
 echo "🔧 Setting up environment..."
+
+# Create .env.example file
+echo "📝 Creating .env.example file..."
+cat > .env.example << 'EOL'
+# API Keys
+GROQ_API_KEY=your_groq_api_key_here
+
+# Configuration
+VECTOR_DB_PATH=./dreamos/memory/vector_db
+PSEUDO_FILES_PATH=./dreamos/memory/pseudo_files.json
+LOG_DIR=./dreamos/logs
+
+# LLM Configuration
+LLM_MODEL=mixtral-8x7b-32768
+# Alternative models: llama3-70b-8192, gemma-7b-it
+
+# Runtime Settings
+DEBUG_MODE=false
+DEFAULT_MEMORY_K=5
+
+# Logging Configuration
+# Levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
+CONSOLE_LOG_LEVEL=INFO
+FILE_LOG_LEVEL=DEBUG
+ENABLE_FILE_LOGGING=true
+EOL
+echo "✅ Created .env.example file"
+
+# Copy to .env if it doesn't exist
 if [ ! -f .env ]; then
     cp .env.example .env
     echo "✅ Created .env file from template"

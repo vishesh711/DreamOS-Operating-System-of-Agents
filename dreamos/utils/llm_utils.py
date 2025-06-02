@@ -40,7 +40,8 @@ def call_llm(
     Returns:
         Generated text response
     """
-    model_name = model or LLM_MODEL
+    # Use hardcoded up-to-date model name
+    model_name = "gemma2-9b-it"
     logger.debug(f"Calling LLM with model: {model_name}, temperature: {temperature}, max_tokens: {max_tokens}")
     
     # Log messages in a readable format

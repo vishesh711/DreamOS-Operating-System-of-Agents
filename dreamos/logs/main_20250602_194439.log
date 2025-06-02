@@ -1,0 +1,51 @@
+2025-06-02 19:44:39,853 | main         | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/main_20250602_194439.log
+2025-06-02 19:44:39,854 | main         | INFO     | DreamOS starting - Python 3.11.11 (main, Dec  3 2024, 17:20:40) [Clang 16.0.0 (clang-1600.0.26.4)]
+2025-06-02 19:44:39,854 | main         | INFO     | Platform: darwin
+2025-06-02 19:44:39,854 | main         | INFO     | Console logging level: INFO
+2025-06-02 19:44:39,854 | main         | INFO     | File logging enabled
+2025-06-02 19:44:39,854 | main         | INFO     | File logging level: DEBUG
+2025-06-02 19:44:39,854 | main         | INFO     | Log directory: ./dreamos/logs
+2025-06-02 19:44:39,854 | main         | INFO     | Setting up DreamOS environment
+2025-06-02 19:44:39,854 | main         | DEBUG    | Created memory directory
+2025-06-02 19:44:39,854 | main         | DEBUG    | Created plugins directory
+2025-06-02 19:44:39,854 | main         | DEBUG    | Created logs directory at ./dreamos/logs
+2025-06-02 19:44:39,854 | main         | INFO     | Environment setup complete
+2025-06-02 19:44:39,854 | main         | INFO     | Initializing Terminal Agent
+2025-06-02 19:44:39,857 | main         | INFO     | Starting DreamOS CLI
+2025-06-02 19:44:39,857 | main         | INFO     | DreamOS banner displayed
+2025-06-02 19:44:39,857 | main         | DEBUG    | Using command history file: /Users/vishesh/.dreamos_history
+2025-06-02 19:44:39,857 | main         | DEBUG    | Read command history from file
+2025-06-02 19:44:39,857 | main         | INFO     | Entering command loop
+2025-06-02 19:44:49,632 | main         | DEBUG    | User entered command: help
+2025-06-02 19:44:49,637 | main         | DEBUG    | Response received: DreamOS Command Help:
+
+File Commands:
+- list files...
+2025-06-02 19:45:03,936 | main         | DEBUG    | User entered command: What do you remember about my project?
+2025-06-02 19:45:04,654 | main         | DEBUG    | Response received: I don't have any information about your project. C...
+2025-06-02 19:45:24,345 | main         | DEBUG    | User entered command: Read my todo list
+2025-06-02 19:45:24,857 | main         | DEBUG    | Response received: Opening file /home/user/todo.txt 
+
+Here is the con...
+2025-06-02 19:45:31,140 | main         | DEBUG    | User entered command: clear the todo list
+2025-06-02 19:45:31,563 | main         | DEBUG    | Response received: Opening file /home/user/todo.txt 
+
+Clearing all co...
+2025-06-02 19:45:42,597 | main         | DEBUG    | User entered command: what all can you help me with?
+2025-06-02 19:45:43,021 | main         | DEBUG    | Response received: I can help you manage your notes, files, and tasks...
+2025-06-02 19:45:51,601 | main         | DEBUG    | User entered command: open youtube
+2025-06-02 19:45:51,976 | main         | DEBUG    | Response received: Using the web_browser tool to open YouTube. 
+
+2025-06-02 19:46:13,345 | main         | DEBUG    | User entered command: it didnt open
+2025-06-02 19:46:13,991 | main         | DEBUG    | Response received: It seems like the user is experiencing an issue wi...
+2025-06-02 19:46:39,475 | main         | WARNING  | KeyboardInterrupt detected
+2025-06-02 19:46:41,083 | main         | WARNING  | KeyboardInterrupt detected
+2025-06-02 19:46:43,168 | main         | DEBUG    | User entered command: exit 
+2025-06-02 19:46:43,791 | main         | DEBUG    | Response received: Understood. Opening YouTube. 
+
+[Updating shared me...
+2025-06-02 19:46:48,651 | main         | DEBUG    | User entered command: exit
+2025-06-02 19:46:48,651 | main         | INFO     | Exit command received, terminating
+2025-06-02 19:46:48,651 | main         | INFO     | Writing command history to file
+2025-06-02 19:46:48,652 | main         | INFO     | DreamOS CLI terminated
+2025-06-02 19:46:48,652 | main         | INFO     | DreamOS shutdown complete

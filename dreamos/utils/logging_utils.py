@@ -4,6 +4,7 @@ Logging utilities for DreamOS
 import os
 import logging
 import datetime
+import glob
 from pathlib import Path
 from typing import Optional
 
@@ -104,6 +105,22 @@ def setup_logger(
         # Create log file with timestamp
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = os.path.join(log_dir, f"{name}_{timestamp}.log")
+        
+        # Delete older log files for this logger
+        old_log_pattern = os.path.join(log_dir, f"{name}_*.log")
+        old_logs = glob.glob(old_log_pattern)
+        
+        # Sort by creation time (newest last)
+        old_logs.sort(key=os.path.getctime)
+        
+        # Remove all but the newest log file (which will be the one we're creating now)
+        for old_log in old_logs:
+            try:
+                os.remove(old_log)
+                logger.debug(f"Deleted old log file: {old_log}")
+            except Exception as e:
+                # Just log the error but continue
+                print(f"Error deleting old log file {old_log}: {str(e)}")
         
         # Add file handler
         file_handler = logging.FileHandler(log_file)

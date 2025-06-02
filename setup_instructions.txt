@@ -1,0 +1,1 @@
+Create an .env file with your Groq API key and other settings as shown in the README.
