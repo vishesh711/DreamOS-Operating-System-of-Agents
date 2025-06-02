@@ -1,0 +1,26 @@
+{
+  "tool_class_mapping": {
+    "calculator": "CalculatorTool",
+    "web_browser": "WebBrowserTool",
+    "code_runner": "CodeRunnerTool"
+  },
+  "enabled_tools": [
+    "calculator"
+  ],
+  "tool_configs": {
+    "web_browser": {
+      "timeout": 30,
+      "max_results": 5
+    },
+    "code_runner": {
+      "allowed_imports": [
+        "math",
+        "datetime",
+        "statistics",
+        "json",
+        "re"
+      ],
+      "timeout": 10
+    }
+  }
+} 
