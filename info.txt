@@ -1,1 +1,44 @@
 # API key has been moved to .env file
+
+🔧 Suggestions for Further Improvement
+Security Layer for Tool Execution:
+
+Add sandboxing via Docker or Python virtualenvs for tools like the Code Runner.
+
+Use dependency whitelists or restrict file access for untrusted code execution.
+
+Agent Communication Protocol (Internal DSL):
+
+Consider designing a simple internal protocol or DSL for agents to communicate or raise intents between each other, allowing for richer collaboration (e.g., #memory:retrieve, #plugin:execute[web_browser]).
+
+Graph-Based Agent Planner:
+
+Integrate an agent planner (e.g., using langgraph or a custom task graph engine) to map complex multi-step tasks across agents and tools.
+
+Metrics Dashboard:
+
+Add runtime performance stats (agent execution time, memory usage, tool hit frequency, LLM latency) to help profile performance and usage patterns.
+
+Plugin Marketplace Foundation:
+
+Define a manifest-based plugin registration spec (plugin.json, tool_info.yaml) for community-driven tool additions in the future.
+
+Federated Memory Expansion:
+
+Enable plug-and-play with cloud vector databases like Pinecone or Weaviate for large-scale memory use cases.
+
+Workflow Recording & Replay:
+
+Add the ability to record multi-agent task sequences and replay them with modified inputs (useful for debugging or automation).
+
+🏆 If Targeting Awards or Recognition
+To stand out further in hackathons or showcases:
+
+Make a high-polish demo video (CLI + voice + browser + agent responses with animation).
+
+Include a “Why DreamOS” section on your GitHub or web app with clear, visual use cases.
+
+Highlight real-world applications (e.g., job search assistant, personal research agent, developer helper).
+
+Document agent workflows visually—flowcharts showing how commands flow through agents.
+
