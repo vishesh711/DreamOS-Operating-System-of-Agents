@@ -1,0 +1,57 @@
+2025-06-03 02:15:54,142 | main         | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/main_20250603_021554.log
+2025-06-03 02:15:54,142 | main         | INFO     | DreamOS starting - Python 3.11.11 (main, Dec  3 2024, 17:20:40) [Clang 16.0.0 (clang-1600.0.26.4)]
+2025-06-03 02:15:54,142 | main         | INFO     | Platform: darwin
+2025-06-03 02:15:54,142 | main         | INFO     | Console logging level: INFO
+2025-06-03 02:15:54,142 | main         | INFO     | File logging enabled
+2025-06-03 02:15:54,142 | main         | INFO     | File logging level: DEBUG
+2025-06-03 02:15:54,142 | main         | INFO     | Log directory: ./dreamos/logs
+2025-06-03 02:15:54,142 | main         | INFO     | Setting up DreamOS environment
+2025-06-03 02:15:54,142 | main         | DEBUG    | Created memory directory
+2025-06-03 02:15:54,142 | main         | DEBUG    | Created plugins directory
+2025-06-03 02:15:54,142 | main         | DEBUG    | Created visualizations directory
+2025-06-03 02:15:54,142 | main         | DEBUG    | Created databases directory
+2025-06-03 02:15:54,142 | main         | DEBUG    | Created logs directory at ./dreamos/logs
+2025-06-03 02:15:54,142 | main         | INFO     | Environment setup complete
+2025-06-03 02:15:54,142 | main         | INFO     | Initializing Terminal Agent
+2025-06-03 02:15:54,144 | main         | INFO     | Starting DreamOS CLI
+2025-06-03 02:15:54,144 | main         | INFO     | DreamOS banner displayed
+2025-06-03 02:15:54,144 | main         | DEBUG    | Using command history file: /Users/vishesh/.dreamos_history
+2025-06-03 02:15:54,144 | main         | DEBUG    | Read command history from file
+2025-06-03 02:15:54,144 | main         | INFO     | Entering command loop
+2025-06-03 02:16:09,386 | main         | DEBUG    | User entered command: help
+2025-06-03 02:16:09,390 | main         | DEBUG    | Response received: 
+DreamOS Help
+===========
+
+Available Commands:
+---...
+2025-06-03 02:18:12,674 | main         | DEBUG    | User entered command: db help
+2025-06-03 02:18:12,675 | main         | DEBUG    | Response received: 
+Database Query Commands:
+----------------------
+d...
+2025-06-03 02:18:50,047 | main         | DEBUG    | User entered command: web search open youtube on safari
+2025-06-03 02:18:50,512 | main         | DEBUG    | Response received: Tool: web_browser 
+
+Parameters: open youtube on sa...
+2025-06-03 02:19:26,038 | main         | DEBUG    | User entered command: web search open youtube on safari
+2025-06-03 02:19:26,555 | main         | DEBUG    | Response received: Tool: web_browser 
+
+Parameters: open youtube on sa...
+2025-06-03 02:19:42,096 | main         | DEBUG    | User entered command: help
+2025-06-03 02:19:42,099 | main         | DEBUG    | Response received: 
+DreamOS Help
+===========
+
+Available Commands:
+---...
+2025-06-03 02:20:20,135 | main         | DEBUG    | User entered command: calculate 305005050*50050
+2025-06-03 02:20:20,973 | main         | DEBUG    | Response received: Tool: calculator 
+
+Parameters: 305005050*50050 
+
+2025-06-03 02:28:55,933 | main         | DEBUG    | User entered command: exit
+2025-06-03 02:28:55,934 | main         | INFO     | Exit command received, terminating
+2025-06-03 02:28:55,935 | main         | INFO     | Writing command history to file
+2025-06-03 02:28:55,935 | main         | INFO     | DreamOS CLI terminated
+2025-06-03 02:28:55,935 | main         | INFO     | DreamOS shutdown complete

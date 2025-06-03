@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamOS Web Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 p-0 bg-dark sidebar">
+                <div class="d-flex flex-column p-3 text-white">
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">DreamOS</span>
+                    </a>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link active" aria-current="page">
+                                <i class="bi bi-terminal"></i> Terminal
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/dashboard" class="nav-link text-white">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="filesLink">
+                                <i class="bi bi-folder"></i> Files
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="memoriesLink">
+                                <i class="bi bi-brain"></i> Memories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="visualizationsLink">
+                                <i class="bi bi-bar-chart"></i> Visualizations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="databaseLink">
+                                <i class="bi bi-database"></i> Database
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/settings" class="nav-link text-white">
+                                <i class="bi bi-gear"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <strong>User</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content area -->
+            <div class="col-md-10 col-lg-10 ms-sm-auto px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">DreamOS Terminal</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="clearBtn">Clear</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="helpBtn">Help</button>
+                        </div>
+                        <div class="form-check form-switch ms-2">
+                            <input class="form-check-input" type="checkbox" id="voiceToggle">
+                            <label class="form-check-label" for="voiceToggle">Voice</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terminal output area -->
+                <div class="terminal-container">
+                    <div class="terminal-output" id="terminalOutput">
+                        <div class="terminal-greeting">
+                            <pre class="ascii-art">
+    _____                           ____   _____ 
+   |  __ \                         / __ \ / ____|
+   | |  | |_ __ ___  __ _ _ __ ___| |  | | (___  
+   | |  | | '__/ _ \/ _` | '_ ` _ \ |  | |\___ \ 
+   | |__| | | |  __/ (_| | | | | | | |__| |____) |
+   |_____/|_|  \___|\__,_|_| |_| |_|\____/|_____/ 
+                                                  
+    An Agentic AI Operating System
+    Type 'help' for available commands.
+                            </pre>
+                            <p>Welcome to DreamOS Web Interface! Enter a command below to get started.</p>
+                        </div>
+                    </div>
+                    <div class="terminal-input-container">
+                        <div class="input-group">
+                            <span class="input-group-text">&gt;</span>
+                            <input type="text" class="form-control" id="commandInput" placeholder="Enter a command...">
+                            <button class="btn btn-primary" type="button" id="sendBtn">Send</button>
+                            <button class="btn btn-outline-secondary" type="button" id="micBtn">
+                                <i class="bi bi-mic"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status bar -->
+                <div class="status-bar mt-3">
+                    <div class="row">
+                        <div class="col">
+                            <span id="statusIndicator" class="badge bg-success">Ready</span>
+                        </div>
+                        <div class="col text-end">
+                            <small id="timestamp">Last update: <span id="lastUpdateTime">Never</span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connection error alert -->
+                <div class="alert alert-danger mt-3 d-none" role="alert" id="connectionError">
+                    <strong>Connection Error</strong> - Lost connection to the DreamOS server. Please refresh the page to reconnect.
+                    <button type="button" class="btn-close float-end" aria-label="Close" id="closeErrorBtn"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature initialization modal -->
+    <div class="modal fade" id="initModal" tabindex="-1" aria-labelledby="initModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="initModalLabel">Initialize DreamOS</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Select the features you want to enable:</p>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="voiceFeature">
+                        <label class="form-check-label" for="voiceFeature">Voice Interface</label>
+                        <small class="form-text text-muted d-block">Enable speech recognition and text-to-speech</small>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="datavizFeature">
+                        <label class="form-check-label" for="datavizFeature">Data Visualization</label>
+                        <small class="form-text text-muted d-block">Enable chart creation and data visualization</small>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="dbqueryFeature">
+                        <label class="form-check-label" for="dbqueryFeature">Database Querying</label>
+                        <small class="form-text text-muted d-block">Enable natural language database queries</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="initButton">Initialize</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamOS Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 p-0 bg-dark sidebar">
+                <div class="d-flex flex-column p-3 text-white">
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">DreamOS</span>
+                    </a>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link text-white">
+                                <i class="bi bi-terminal"></i> Terminal
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/dashboard" class="nav-link active" aria-current="page">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="filesLink">
+                                <i class="bi bi-folder"></i> Files
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="memoriesLink">
+                                <i class="bi bi-brain"></i> Memories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="visualizationsLink">
+                                <i class="bi bi-bar-chart"></i> Visualizations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="databaseLink">
+                                <i class="bi bi-database"></i> Database
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/settings" class="nav-link text-white">
+                                <i class="bi bi-gear"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <strong>User</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content area -->
+            <div class="col-md-10 col-lg-10 ms-sm-auto px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn">Refresh</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="fullscreenBtn">Fullscreen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard content -->
+                <div class="row">
+                    <!-- System Status Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">System Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <span class="badge bg-success">Active</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">DreamOS Core</h6>
+                                        <small class="text-muted">Running smoothly</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <span class="badge bg-success" id="memoryStatus">Active</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Memory Agent</h6>
+                                        <small class="text-muted" id="memoryDetails">1024 memories stored</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <span class="badge bg-success" id="fileStatus">Active</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">File Agent</h6>
+                                        <small class="text-muted" id="fileDetails">15 files managed</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <span class="badge bg-success" id="pluginStatus">Active</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Plugin Agent</h6>
+                                        <small class="text-muted" id="pluginDetails">6 plugins loaded</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Card -->
+                    <div class="col-md-8 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush" id="activityList">
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Terminal Command</div>
+                                            User executed "help" command
+                                        </div>
+                                        <span class="text-muted small">Just now</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">File Operation</div>
+                                            Created file "notes.txt"
+                                        </div>
+                                        <span class="text-muted small">5 minutes ago</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Memory Storage</div>
+                                            Stored new memory about meeting schedule
+                                        </div>
+                                        <span class="text-muted small">10 minutes ago</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Data Visualization</div>
+                                            Created bar chart from provided data
+                                        </div>
+                                        <span class="text-muted small">20 minutes ago</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Memory Usage Chart -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Memory Usage</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="memoryChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Command Statistics Chart -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Command Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="commandChart" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Quick Actions Card -->
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <a href="/" class="btn btn-outline-primary w-100 p-3">
+                                            <i class="bi bi-terminal fs-3 d-block mb-2"></i>
+                                            Terminal
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="createVisualizationBtn">
+                                            <i class="bi bi-bar-chart fs-3 d-block mb-2"></i>
+                                            Create Visualization
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="queryDatabaseBtn">
+                                            <i class="bi bi-database fs-3 d-block mb-2"></i>
+                                            Query Database
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="createFileBtn">
+                                            <i class="bi bi-file-earmark-plus fs-3 d-block mb-2"></i>
+                                            Create File
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize charts
+            const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+            const memoryChart = new Chart(memoryCtx, {
+                type: 'line',
+                data: {
+                    labels: ['6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Yesterday', 'Today'],
+                    datasets: [{
+                        label: 'Memory Usage',
+                        data: [65, 120, 180, 220, 250, 300, 350],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            const commandCtx = document.getElementById('commandChart').getContext('2d');
+            const commandChart = new Chart(commandCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Terminal', 'File Operations', 'Memory', 'Web Search', 'Visualization', 'Database'],
+                    datasets: [{
+                        data: [30, 20, 15, 12, 10, 13],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Socket.IO connection for real-time updates
+            const socket = io();
+            
+            socket.on('connect', function() {
+                console.log('Connected to server');
+            });
+            
+            socket.on('dashboard_update', function(data) {
+                // Update system status
+                if (data.system_status) {
+                    updateSystemStatus(data.system_status);
+                }
+                
+                // Update activity list
+                if (data.activities && data.activities.length > 0) {
+                    updateActivityList(data.activities);
+                }
+                
+                // Update charts
+                if (data.memory_usage) {
+                    updateMemoryChart(data.memory_usage);
+                }
+                
+                if (data.command_stats) {
+                    updateCommandChart(data.command_stats);
+                }
+            });
+            
+            // Functions to update dashboard elements
+            function updateSystemStatus(status) {
+                if (status.memory) {
+                    document.getElementById('memoryStatus').className = 'badge ' + (status.memory.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('memoryDetails').textContent = status.memory.details;
+                }
+                
+                if (status.file) {
+                    document.getElementById('fileStatus').className = 'badge ' + (status.file.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('fileDetails').textContent = status.file.details;
+                }
+                
+                if (status.plugin) {
+                    document.getElementById('pluginStatus').className = 'badge ' + (status.plugin.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('pluginDetails').textContent = status.plugin.details;
+                }
+            }
+            
+            function updateActivityList(activities) {
+                const activityList = document.getElementById('activityList');
+                
+                // Clear existing activities
+                activityList.innerHTML = '';
+                
+                // Add new activities
+                activities.forEach(activity => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-start';
+                    listItem.innerHTML = `
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">${activity.type}</div>
+                            ${activity.description}
+                        </div>
+                        <span class="text-muted small">${activity.time}</span>
+                    `;
+                    activityList.appendChild(listItem);
+                });
+            }
+            
+            function updateMemoryChart(data) {
+                memoryChart.data.labels = data.labels;
+                memoryChart.data.datasets[0].data = data.values;
+                memoryChart.update();
+            }
+            
+            function updateCommandChart(data) {
+                commandChart.data.labels = data.labels;
+                commandChart.data.datasets[0].data = data.values;
+                commandChart.update();
+            }
+            
+            // Button event listeners
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Request fresh data from the server
+                socket.emit('refresh_dashboard');
+            });
+            
+            document.getElementById('createVisualizationBtn').addEventListener('click', function() {
+                window.location.href = '/?command=viz%20create';
+            });
+            
+            document.getElementById('queryDatabaseBtn').addEventListener('click', function() {
+                window.location.href = '/?command=db%20query';
+            });
+            
+            document.getElementById('createFileBtn').addEventListener('click', function() {
+                window.location.href = '/?command=write';
+            });
+        });
+    </script>
+</body>
+</html> 

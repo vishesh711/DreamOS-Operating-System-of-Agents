@@ -79,7 +79,14 @@ class VoiceInterfaceTool:
         if wait:
             # Speak and wait until done
             self.tts_engine.say(text)
-            self.tts_engine.runAndWait()
+            try:
+                self.tts_engine.runAndWait()
+            except RuntimeError as e:
+                # Handle "run loop already started" error
+                if "run loop already started" in str(e):
+                    logger.warning("Speech synthesis run loop already started, continuing without waiting")
+                else:
+                    logger.error(f"Speech synthesis error: {str(e)}")
         else:
             # Speak in a separate thread
             threading.Thread(target=self._speak_async, args=(text,), daemon=True).start()
@@ -92,7 +99,14 @@ class VoiceInterfaceTool:
             text: Text to speak
         """
         self.tts_engine.say(text)
-        self.tts_engine.runAndWait()
+        try:
+            self.tts_engine.runAndWait()
+        except RuntimeError as e:
+            # Handle "run loop already started" error
+            if "run loop already started" in str(e):
+                logger.warning("Speech synthesis run loop already started, continuing without waiting")
+            else:
+                logger.error(f"Speech synthesis error: {str(e)}")
     
     def listen(self, timeout: int = 5) -> Optional[str]:
         """

@@ -41,6 +41,8 @@ DreamOS is built around four specialized AI agents that work together seamlessly
 - Python 3.8 or higher
 - Groq API key (sign up at [groq.com](https://console.groq.com/))
 - For voice interface: Working microphone and speakers
+- For macOS users: Homebrew (for installing portaudio)
+- For Linux users: portaudio19-dev and python3-pyaudio packages
 
 ### Installation
 
@@ -50,20 +52,81 @@ DreamOS is built around four specialized AI agents that work together seamlessly
    cd DreamOS-Operating-System-of-Agents
    ```
 
-2. Run the setup script to create a virtual environment and install dependencies:
+2. Make the setup script executable:
+   ```bash
+   chmod +x setup.sh
+   ```
+
+3. Run the setup script to create a virtual environment and install dependencies:
    ```bash
    ./setup.sh
    ```
+   
+   The setup script will:
+   - Check for Python compatibility
+   - Create and activate a virtual environment
+   - Install all required dependencies
+   - Check for platform-specific dependencies (like portaudio for voice interface)
+   - Create necessary directories
+   - Make executable scripts runnable
+   - Generate example configuration files
 
-3. Activate the virtual environment:
+4. Activate the virtual environment:
    ```bash
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-4. Add your Groq API key to the `.env` file:
+5. Add your Groq API key to the `.env` file:
    ```bash
    echo "GROQ_API_KEY=your-key-here" >> .env
    ```
+   
+   Alternatively, you can edit the `.env` file manually:
+   ```bash
+   nano .env
+   # Edit the file to add: GROQ_API_KEY=your-key-here
+   ```
+
+### Troubleshooting Setup
+
+If you encounter issues during setup:
+
+- **Voice Interface Dependencies**: 
+  - On macOS: `brew install portaudio`
+  - On Ubuntu/Debian: `sudo apt-get install portaudio19-dev python3-pyaudio`
+  
+- **Scientific Computing Dependencies (scipy/numpy)**:
+  - On macOS: 
+    ```bash
+    brew install openblas pkg-config
+    export OPENBLAS="$(brew --prefix openblas)"
+    export PKG_CONFIG_PATH="$OPENBLAS/lib/pkgconfig"
+    pip install numpy scipy --no-binary scipy
+    ```
+  - On Ubuntu/Debian: `sudo apt-get install libopenblas-dev python3-scipy python3-numpy`
+  
+- **Permission Issues**:
+  - If setup.sh is not executable: `chmod +x setup.sh`
+  - If run_dreamos.py is not executable: `chmod +x run_dreamos.py`
+  
+- **Virtual Environment Issues**:
+  - If venv module is missing: `pip install virtualenv`
+  - Manual creation: `python3 -m virtualenv venv && source venv/bin/activate`
+
+- **Alternative Installation Method**:
+  If you encounter persistent issues with `setup.sh`, you can try installing dependencies manually:
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install --upgrade pip
+  # Install core dependencies first
+  pip install python-dotenv langchain pydantic
+  # Install the remaining dependencies one by one
+  pip install -r requirements.txt --no-deps
+  ```
+  
+- **Installation Logs**:
+  - Check logs in the `dreamos/logs` directory
 
 ### Running DreamOS
 
@@ -91,6 +154,51 @@ Enable multiple features at once:
 ```bash
 ./run_dreamos.py --voice --dataviz --dbquery
 ```
+
+### Web Interface
+
+DreamOS now includes a modern web interface that provides access to all features in a user-friendly dashboard:
+
+```bash
+# Start the web interface
+./run_web.py
+
+# Start with specific host and port
+./run_web.py --host 0.0.0.0 --port 8080
+
+# Start in debug mode
+./run_web.py --debug
+```
+
+Visit `http://localhost:5000` in your browser to access the web interface.
+
+#### Web Interface Features
+
+- **Modern UI**: Clean, responsive design that works on desktop and mobile
+- **Terminal Emulation**: Familiar terminal experience with command history
+- **Real-time Updates**: Instant command responses using WebSockets
+- **Voice Recognition**: Browser-based speech recognition for voice commands
+- **Visualization Display**: View charts and data visualizations directly in the browser
+- **Dashboard**: View system status, memory usage, and command statistics
+- **Settings Panel**: Configure DreamOS options through a graphical interface
+- **Database Access**: Query and view database results in structured format
+
+#### Web Pages
+
+- **Terminal**: Main interface with command input and response display
+- **Dashboard**: System monitoring with charts and status information
+- **Settings**: Configure DreamOS behavior, voice settings, and API keys
+
+#### Using the Web Interface
+
+1. Start the web interface with `./run_web.py`
+2. Open your browser to `http://localhost:5000`
+3. Initialize the system by selecting the features you want to enable
+4. Use the terminal interface to enter commands, just like the CLI version
+5. Use the microphone button for voice input (if enabled)
+6. Navigate between different sections using the sidebar
+7. View real-time updates in the dashboard
+8. Customize settings in the settings page
 
 ### Testing Individual Features
 
@@ -201,81 +309,3 @@ Here are some examples of how to interact with DreamOS:
 
 ### Basic Operations
 ```
-> write "Meeting with Alex on Tuesday at 2pm" to notes.txt
-> read notes.txt
-> what time is my meeting with Alex?
-```
-
-### Voice Interface
-```
-> voice speak Hello, how can I help you today?
-> voice listen
-  [System listens for voice command]
-> voice start
-  [System begins continuous listening]
-```
-
-### Data Visualization
-```
-> viz create bar {"Categories": ["A", "B", "C"], "Values": [10, 20, 30]} --title=Sample Chart
-> viz parse "A, 10; B, 20; C, 30"
-```
-
-### Database Querying
-```
-> db load data/employees.csv
-> db query What is the average salary by department?
-> db describe employees
-```
-
-### Web and Calculations
-```
-> search web for latest AI research papers
-> calculate 25 * 4.5 + (10 / 2)
-```
-
-### Memory Operations
-```
-> remember John's birthday is on March 15th
-> recall when is John's birthday?
-```
-
-## 🧩 Architecture
-
-DreamOS follows a modular architecture with these key components:
-
-1. **Agent System**: Specialized agents that handle different aspects of the system
-2. **Tool Integration**: Pluggable tools that provide specific capabilities
-3. **Memory Management**: Vector-based storage for long-term recall
-4. **Command Router**: Intelligent routing of commands to appropriate handlers
-
-## 🛠️ Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-Please follow the project's code style and include appropriate tests.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🔮 Future Roadmap
-
-- **Image Generation**: Add text-to-image generation capabilities
-- **Collaborative Workflows**: Support for multiple users working together
-- **Advanced File System**: File versioning and collaborative editing
-- **Additional Data Connectors**: Support for more database formats
-- **Voice Customization**: Adjustable voice parameters and multilingual support
-
-## 🙏 Acknowledgements
-
-- [Groq](https://groq.com/) for the LLM API
-- [FAISS](https://github.com/facebookresearch/faiss) for vector storage
-- [SpeechRecognition](https://github.com/Uberi/speech_recognition) and [pyttsx3](https://github.com/nateshmbhat/pyttsx3) for voice interface
-- [Matplotlib](https://matplotlib.org/) and [Pandas](https://pandas.pydata.org/) for data visualization
-- [SQLAlchemy](https://www.sqlalchemy.org/) and [SQLite](https://www.sqlite.org/) for database functionality

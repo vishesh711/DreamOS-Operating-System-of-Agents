@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamOS Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 p-0 bg-dark sidebar">
+                <div class="d-flex flex-column p-3 text-white">
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">DreamOS</span>
+                    </a>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link text-white">
+                                <i class="bi bi-terminal"></i> Terminal
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/dashboard" class="nav-link text-white">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="filesLink">
+                                <i class="bi bi-folder"></i> Files
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="memoriesLink">
+                                <i class="bi bi-brain"></i> Memories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="visualizationsLink">
+                                <i class="bi bi-bar-chart"></i> Visualizations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link text-white" id="databaseLink">
+                                <i class="bi bi-database"></i> Database
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/settings" class="nav-link active" aria-current="page">
+                                <i class="bi bi-gear"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <strong>User</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content area -->
+            <div class="col-md-10 col-lg-10 ms-sm-auto px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Settings</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-sm btn-primary" id="saveSettingsBtn">Save Settings</button>
+                    </div>
+                </div>
+
+                <!-- Settings content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">General Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="generalSettingsForm">
+                                    <div class="mb-3">
+                                        <label for="apiKey" class="form-label">Groq API Key</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="apiKey" placeholder="Enter your Groq API key">
+                                            <button class="btn btn-outline-secondary" type="button" id="showApiKeyBtn">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text">Your Groq API key is stored securely. Get a key at <a href="https://console.groq.com/" target="_blank">console.groq.com</a></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Display Name</label>
+                                        <input type="text" class="form-control" id="username" placeholder="Enter your name">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="themeSelect" class="form-label">Theme</label>
+                                        <select class="form-select" id="themeSelect">
+                                            <option value="light">Light</option>
+                                            <option value="dark" selected>Dark</option>
+                                            <option value="system">System Default</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Feature Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="featureSettingsForm">
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="voiceFeatureToggle" checked>
+                                            <label class="form-check-label" for="voiceFeatureToggle">Voice Interface</label>
+                                        </div>
+                                        <div class="form-text">Enable speech recognition and text-to-speech capabilities</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="dataVizFeatureToggle" checked>
+                                            <label class="form-check-label" for="dataVizFeatureToggle">Data Visualization</label>
+                                        </div>
+                                        <div class="form-text">Enable chart creation and data visualization tools</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="dbQueryFeatureToggle" checked>
+                                            <label class="form-check-label" for="dbQueryFeatureToggle">Database Querying</label>
+                                        </div>
+                                        <div class="form-text">Enable natural language database query capabilities</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="webSearchFeatureToggle" checked>
+                                            <label class="form-check-label" for="webSearchFeatureToggle">Web Search</label>
+                                        </div>
+                                        <div class="form-text">Enable web search functionality</div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Voice Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="voiceSettingsForm">
+                                    <div class="mb-3">
+                                        <label for="voiceSelect" class="form-label">Voice Type</label>
+                                        <select class="form-select" id="voiceSelect">
+                                            <option value="default" selected>System Default</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="speechRateRange" class="form-label">Speech Rate</label>
+                                        <input type="range" class="form-range" min="0.5" max="2" step="0.1" value="1" id="speechRateRange">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Slower</span>
+                                            <span>Normal</span>
+                                            <span>Faster</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="speechVolumeRange" class="form-label">Speech Volume</label>
+                                        <input type="range" class="form-range" min="0" max="1" step="0.1" value="0.8" id="speechVolumeRange">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Quiet</span>
+                                            <span>Medium</span>
+                                            <span>Loud</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-outline-primary" id="testVoiceBtn">Test Voice</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Advanced Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="advancedSettingsForm">
+                                    <div class="mb-3">
+                                        <label for="logLevelSelect" class="form-label">Log Level</label>
+                                        <select class="form-select" id="logLevelSelect">
+                                            <option value="error">Error</option>
+                                            <option value="warning">Warning</option>
+                                            <option value="info" selected>Info</option>
+                                            <option value="debug">Debug</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="memoryLimitInput" class="form-label">Memory Limit (entries)</label>
+                                        <input type="number" class="form-control" id="memoryLimitInput" value="1000" min="100" max="10000">
+                                        <div class="form-text">Maximum number of memory entries to store</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-warning" id="clearMemoryBtn">Clear Memory</button>
+                                        <button type="button" class="btn btn-danger ms-2" id="resetSettingsBtn">Reset All Settings</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+        <div id="settingsToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">DreamOS</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="settingsToastMessage">
+                Settings saved successfully!
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+            const clearMemoryBtn = document.getElementById('clearMemoryBtn');
+            const testVoiceBtn = document.getElementById('testVoiceBtn');
+            const showApiKeyBtn = document.getElementById('showApiKeyBtn');
+            const apiKeyInput = document.getElementById('apiKey');
+            const settingsToast = new bootstrap.Toast(document.getElementById('settingsToast'));
+            const settingsToastMessage = document.getElementById('settingsToastMessage');
+            
+            // Socket.IO connection
+            const socket = io();
+            
+            // Load settings from server
+            socket.emit('get_settings');
+            
+            socket.on('settings', function(data) {
+                // Populate form fields with settings data
+                if (data.api_key) {
+                    apiKeyInput.value = data.api_key;
+                }
+                
+                if (data.username) {
+                    document.getElementById('username').value = data.username;
+                }
+                
+                if (data.theme) {
+                    document.getElementById('themeSelect').value = data.theme;
+                }
+                
+                // Feature toggles
+                if (data.features) {
+                    document.getElementById('voiceFeatureToggle').checked = data.features.voice || false;
+                    document.getElementById('dataVizFeatureToggle').checked = data.features.dataviz || false;
+                    document.getElementById('dbQueryFeatureToggle').checked = data.features.dbquery || false;
+                    document.getElementById('webSearchFeatureToggle').checked = data.features.websearch || false;
+                }
+                
+                // Voice settings
+                if (data.voice) {
+                    document.getElementById('voiceSelect').value = data.voice.type || 'default';
+                    document.getElementById('speechRateRange').value = data.voice.rate || 1;
+                    document.getElementById('speechVolumeRange').value = data.voice.volume || 0.8;
+                }
+                
+                // Advanced settings
+                if (data.advanced) {
+                    document.getElementById('logLevelSelect').value = data.advanced.log_level || 'info';
+                    document.getElementById('memoryLimitInput').value = data.advanced.memory_limit || 1000;
+                }
+            });
+            
+            // Save settings
+            saveSettingsBtn.addEventListener('click', function() {
+                const settings = {
+                    api_key: apiKeyInput.value,
+                    username: document.getElementById('username').value,
+                    theme: document.getElementById('themeSelect').value,
+                    features: {
+                        voice: document.getElementById('voiceFeatureToggle').checked,
+                        dataviz: document.getElementById('dataVizFeatureToggle').checked,
+                        dbquery: document.getElementById('dbQueryFeatureToggle').checked,
+                        websearch: document.getElementById('webSearchFeatureToggle').checked
+                    },
+                    voice: {
+                        type: document.getElementById('voiceSelect').value,
+                        rate: parseFloat(document.getElementById('speechRateRange').value),
+                        volume: parseFloat(document.getElementById('speechVolumeRange').value)
+                    },
+                    advanced: {
+                        log_level: document.getElementById('logLevelSelect').value,
+                        memory_limit: parseInt(document.getElementById('memoryLimitInput').value)
+                    }
+                };
+                
+                socket.emit('save_settings', settings);
+                
+                // Show success message
+                settingsToastMessage.textContent = 'Settings saved successfully!';
+                settingsToast.show();
+            });
+            
+            // Reset settings
+            resetSettingsBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                    socket.emit('reset_settings');
+                    
+                    // Show message
+                    settingsToastMessage.textContent = 'Settings reset to defaults!';
+                    settingsToast.show();
+                }
+            });
+            
+            // Clear memory
+            clearMemoryBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all memory? This cannot be undone.')) {
+                    socket.emit('clear_memory');
+                    
+                    // Show message
+                    settingsToastMessage.textContent = 'Memory cleared successfully!';
+                    settingsToast.show();
+                }
+            });
+            
+            // Test voice
+            testVoiceBtn.addEventListener('click', function() {
+                const voiceSettings = {
+                    type: document.getElementById('voiceSelect').value,
+                    rate: parseFloat(document.getElementById('speechRateRange').value),
+                    volume: parseFloat(document.getElementById('speechVolumeRange').value)
+                };
+                
+                socket.emit('test_voice', voiceSettings);
+                
+                // Local speech synthesis for immediate feedback
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance('This is a test of the DreamOS voice system.');
+                    utterance.rate = voiceSettings.rate;
+                    utterance.volume = voiceSettings.volume;
+                    
+                    // Set voice if available
+                    if (voiceSettings.type !== 'default') {
+                        const voices = window.speechSynthesis.getVoices();
+                        const preferredVoices = voices.filter(voice => {
+                            if (voiceSettings.type === 'male') {
+                                return voice.name.toLowerCase().includes('male');
+                            } else if (voiceSettings.type === 'female') {
+                                return voice.name.toLowerCase().includes('female');
+                            }
+                            return false;
+                        });
+                        
+                        if (preferredVoices.length > 0) {
+                            utterance.voice = preferredVoices[0];
+                        }
+                    }
+                    
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+            
+            // Show/hide API key
+            showApiKeyBtn.addEventListener('click', function() {
+                if (apiKeyInput.type === 'password') {
+                    apiKeyInput.type = 'text';
+                    showApiKeyBtn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                } else {
+                    apiKeyInput.type = 'password';
+                    showApiKeyBtn.innerHTML = '<i class="bi bi-eye"></i>';
+                }
+            });
+            
+            // Socket event handlers
+            socket.on('settings_saved', function() {
+                settingsToastMessage.textContent = 'Settings saved successfully!';
+                settingsToast.show();
+            });
+            
+            socket.on('settings_reset', function() {
+                // Reload page to get default settings
+                window.location.reload();
+            });
+            
+            socket.on('memory_cleared', function() {
+                settingsToastMessage.textContent = 'Memory cleared successfully!';
+                settingsToast.show();
+            });
+        });
+    </script>
+</body>
+</html> 

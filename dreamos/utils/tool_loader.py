@@ -31,7 +31,10 @@ class ToolLoader:
         self.tool_class_mapping = {
             "calculator": "CalculatorTool",
             "web_browser": "WebBrowserTool",
-            "runner": "CodeRunnerTool"
+            "runner": "CodeRunnerTool",
+            "data_viz": "DataVizTool",
+            "database_query": "DatabaseQueryTool",
+            "voice_interface": "VoiceInterfaceTool"
         }
         
         # Load plugin configuration if it exists

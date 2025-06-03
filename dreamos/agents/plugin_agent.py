@@ -72,6 +72,28 @@ class PluginAgent:
         Returns:
             Dictionary with tool name and input, or None if parsing fails
         """
+        # Check for URL patterns in the command
+        url_patterns = [
+            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?(https?://[\w.-]+\.\w+\S*)",
+            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?([\w.-]+\.\w+\S*)",
+            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?([\w.-]+\.\w+)",
+            r"(?:visit|open|go to|navigate to|browse to) (youtube|facebook|twitter|instagram|google|github)",
+        ]
+        
+        for pattern in url_patterns:
+            match = re.search(pattern, command, re.IGNORECASE)
+            if match:
+                url = match.group(1).strip()
+                # For common websites without domain
+                if '.' not in url and not url.startswith('http'):
+                    url = f"{url}.com"
+                
+                return {
+                    "tool_name": "web_browser",
+                    "tool_input": url,
+                    "action": "visit"
+                }
+        
         # Try to extract tool name using regex patterns
         # First try direct tool name mention
         tool_patterns = [
@@ -114,7 +136,13 @@ class PluginAgent:
             tool_name = parsed_command["tool_name"]
             tool_input = parsed_command["tool_input"]
             
-            tool_result = self.execute_tool(tool_name, tool_input)
+            # Check if we have specific action for this tool (like visit for web_browser)
+            action = parsed_command.get("action", None)
+            
+            if action and tool_name == "web_browser":
+                tool_result = self.tool_loader.execute_tool(tool_name, tool_input, action=action)
+            else:
+                tool_result = self.tool_loader.execute_tool(tool_name, tool_input)
             
             return {
                 "status": "success",

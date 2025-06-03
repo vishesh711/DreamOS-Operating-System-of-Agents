@@ -1,0 +1,29 @@
+2025-06-03 02:49:17,502 | memory_agent | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/memory_agent_20250603_024917.log
+2025-06-03 02:49:26,329 | memory_agent | INFO     | Initializing Memory Agent
+2025-06-03 02:49:26,329 | memory_agent | DEBUG    | Initializing vector store
+2025-06-03 02:49:26,332 | memory_agent | INFO     | Memory Agent initialized with 83 memories
+2025-06-03 02:49:32,974 | memory_agent | INFO     | Adding memory: User command: Hi how are you
+2025-06-03 02:49:32,974 | memory_agent | DEBUG    | Memory metadata: {'type': 'command', 'timestamp': '2025-06-03T02:49:32.974013'}
+2025-06-03 02:49:32,974 | memory_agent | DEBUG    | Generating embedding for text: User command: Hi how are you
+2025-06-03 02:49:32,974 | memory_agent | DEBUG    | Embedding generated with shape: (768,)
+2025-06-03 02:49:32,975 | memory_agent | INFO     | Memory added with ID: 83
+2025-06-03 02:49:32,975 | memory_agent | INFO     | Getting 5 most recent memories
+2025-06-03 02:49:32,975 | memory_agent | INFO     | Getting all memories
+2025-06-03 02:49:32,976 | memory_agent | DEBUG    | Retrieved 84 memories
+2025-06-03 02:49:32,976 | memory_agent | DEBUG    | Retrieved 5 recent memories
+2025-06-03 02:49:33,541 | memory_agent | INFO     | Processing command: Hi how are you
+2025-06-03 02:49:33,541 | memory_agent | DEBUG    | Getting recent memories for context
+2025-06-03 02:49:33,541 | memory_agent | INFO     | Getting 5 most recent memories
+2025-06-03 02:49:33,541 | memory_agent | INFO     | Getting all memories
+2025-06-03 02:49:33,541 | memory_agent | DEBUG    | Retrieved 84 memories
+2025-06-03 02:49:33,541 | memory_agent | DEBUG    | Retrieved 5 recent memories
+2025-06-03 02:49:33,541 | memory_agent | DEBUG    | Added additional context to command
+2025-06-03 02:49:33,541 | memory_agent | DEBUG    | Sending command to LLM
+2025-06-03 02:49:33,752 | memory_agent | INFO     | Command processed, response length: 88 chars
+2025-06-03 02:49:33,753 | memory_agent | INFO     | Adding memory: Response to 'Hi how are you':
+Hello! I am doing we...
+2025-06-03 02:49:33,753 | memory_agent | DEBUG    | Memory metadata: {'type': 'response', 'command': 'Hi how are you', 'timestamp': '2025-06-03T02:49:33.753443'}
+2025-06-03 02:49:33,753 | memory_agent | DEBUG    | Generating embedding for text: Response to 'Hi how are you':
+Hello! I am doing we...
+2025-06-03 02:49:33,754 | memory_agent | DEBUG    | Embedding generated with shape: (768,)
+2025-06-03 02:49:33,757 | memory_agent | INFO     | Memory added with ID: 84

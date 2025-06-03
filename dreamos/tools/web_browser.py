@@ -123,15 +123,66 @@ class WebBrowserTool:
         
         return results
     
-    def execute(self, query: str) -> Dict[str, Any]:
+    async def _visit_website(self, url: str) -> Dict[str, Any]:
         """
-        Execute a web search.
+        Visit a specific website URL.
         
         Args:
-            query: The search query
+            url: The URL to visit
             
         Returns:
-            Dictionary with search results or error
+            Dictionary with visit result info
+        """
+        logger.info(f"Visiting website: {url}")
+        
+        # Make sure URL has protocol
+        if not url.startswith('http'):
+            url = 'https://' + url
+        
+        # Set up the browser if needed
+        if not self.browser or not self.page:
+            await self._setup_browser()
+        
+        try:
+            # Navigate to the URL
+            logger.debug(f"Navigating to URL: {url}")
+            await self.page.goto(url, timeout=self.timeout)
+            
+            # Get page title
+            title = await self.page.title()
+            
+            # Take a screenshot for verification (commented out for now)
+            # screenshot_path = os.path.join(os.getcwd(), 'temp_screenshot.png')
+            # await self.page.screenshot(path=screenshot_path)
+            
+            # Get page content summary
+            content = await self.page.evaluate('document.body.innerText')
+            content_summary = content[:1000] + '...' if len(content) > 1000 else content
+            
+            return {
+                "status": "success",
+                "title": title,
+                "url": url,
+                "content_summary": content_summary
+            }
+        except Exception as e:
+            logger.error(f"Error visiting website: {str(e)}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "url": url
+            }
+
+    def execute(self, query: str, action: str = "search") -> Dict[str, Any]:
+        """
+        Execute a web browser action.
+        
+        Args:
+            query: The search query or URL
+            action: The action to perform ("search" or "visit")
+            
+        Returns:
+            Dictionary with action results or error
         """
         if not PLAYWRIGHT_AVAILABLE:
             return {
@@ -140,25 +191,39 @@ class WebBrowserTool:
             }
         
         try:
-            # Run the async search function
-            logger.info(f"Executing web search for: {query}")
-            results = asyncio.run(self._run_search(query))
+            # Determine if this is a URL (for visit action)
+            is_url = False
+            if action == "visit" or (
+                query.startswith(('http://', 'https://')) or 
+                any(query.startswith(d + '.') for d in ['www', 'youtube', 'github', 'google'])
+            ):
+                is_url = True
+                action = "visit"
             
-            # Format the results
-            formatted_results = self._format_results(results)
+            # Run the appropriate async function
+            logger.info(f"Executing web browser {action}: {query}")
+            if action == "visit":
+                result = asyncio.run(self._run_visit(query))
+                # Format the results
+                formatted_result = self._format_visit_results(result)
+            else:  # Default to search
+                results = asyncio.run(self._run_search(query))
+                # Format the results
+                formatted_result = self._format_results(results)
             
             return {
                 "status": "success",
-                "result": formatted_results,
+                "result": formatted_result,
                 "query": query,
-                "count": len(results)
+                "action": action
             }
         except Exception as e:
-            logger.error(f"Error executing web search: {str(e)}", exc_info=True)
+            logger.error(f"Error executing web browser action: {str(e)}", exc_info=True)
             return {
                 "status": "error",
                 "error": str(e),
-                "query": query
+                "query": query,
+                "action": action
             }
     
     async def _run_search(self, query: str) -> List[Dict[str, str]]:
@@ -188,6 +253,34 @@ class WebBrowserTool:
             formatted += f"{i}. {result['title']}\n"
             formatted += f"   URL: {result['url']}\n"
             formatted += f"   {result['snippet']}\n\n"
+        
+        return formatted
+    
+    async def _run_visit(self, url: str) -> Dict[str, Any]:
+        """Run the website visit and cleanup."""
+        try:
+            result = await self._visit_website(url)
+            return result
+        finally:
+            await self._close_browser()
+    
+    def _format_visit_results(self, result: Dict[str, Any]) -> str:
+        """
+        Format website visit results into a readable string.
+        
+        Args:
+            result: Visit result dictionary
+            
+        Returns:
+            Formatted visit result string
+        """
+        if result.get("status") != "success":
+            return f"Failed to visit website: {result.get('error', 'Unknown error')}"
+        
+        formatted = f"Successfully visited: {result.get('title', 'Unknown title')}\n"
+        formatted += f"URL: {result.get('url')}\n\n"
+        formatted += "Page content summary:\n"
+        formatted += result.get('content_summary', 'No content available')
         
         return formatted
     

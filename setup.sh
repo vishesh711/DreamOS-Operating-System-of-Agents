@@ -176,6 +176,15 @@ print_success "Made data_viz_test.py executable."
 chmod +x db_query_test.py
 print_success "Made db_query_test.py executable."
 
+# Make run_web.py executable
+echo -e "\n${YELLOW}Making run_web.py executable...${NC}"
+chmod +x run_web.py
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to make run_web.py executable.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}run_web.py is now executable.${NC}"
+
 # Finished
 print_header "Setup Complete"
 print_success "DreamOS has been set up successfully!"

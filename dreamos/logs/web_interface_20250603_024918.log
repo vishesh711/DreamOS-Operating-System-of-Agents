@@ -1,0 +1,6 @@
+2025-06-03 02:49:18,200 | web_interface | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/web_interface_20250603_024918.log
+2025-06-03 02:49:20,255 | web_interface | INFO     | Client connected: -aG8SHQ0cckar11MAAAB
+2025-06-03 02:49:26,328 | web_interface | INFO     | Initializing Terminal Agent for web interface
+2025-06-03 02:49:26,922 | web_interface | INFO     | Terminal Agent initialized successfully
+2025-06-03 02:49:32,973 | web_interface | INFO     | Processing Socket.IO command: 'Hi how are you' from -aG8SHQ0cckar11MAAAB
+2025-06-03 02:49:39,062 | web_interface | INFO     | Client disconnected: -aG8SHQ0cckar11MAAAB
