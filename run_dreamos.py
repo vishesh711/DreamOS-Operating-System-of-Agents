@@ -20,6 +20,9 @@ def main():
     parser = argparse.ArgumentParser(description="DreamOS - An Agentic AI Operating System")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     parser.add_argument("--web", action="store_true", help="Run in web interface mode (not implemented yet)")
+    parser.add_argument("--voice", action="store_true", help="Enable voice interface")
+    parser.add_argument("--dataviz", action="store_true", help="Enable data visualization features")
+    parser.add_argument("--dbquery", action="store_true", help="Enable database querying features")
     parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], 
                         help="Set the console logging level")
     parser.add_argument("--disable-file-logging", action="store_true", 
@@ -38,6 +41,12 @@ def main():
     
     if args.debug:
         os.environ["DEBUG_MODE"] = "true"
+    
+    if args.dataviz:
+        os.environ["ENABLE_DATAVIZ"] = "true"
+    
+    if args.dbquery:
+        os.environ["ENABLE_DBQUERY"] = "true"
     
     # Import DreamOS main module
     from dreamos.main import main as dreamos_main

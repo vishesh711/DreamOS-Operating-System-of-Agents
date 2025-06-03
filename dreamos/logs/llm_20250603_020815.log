@@ -1,0 +1,12 @@
+2025-06-03 02:08:15,434 | llm          | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/llm_20250603_020815.log
+2025-06-03 02:08:15,441 | llm          | INFO     | Initialized Groq client with model: mixtral-8x7b-32768
+2025-06-03 02:08:16,043 | llm          | INFO     | Generating agent response for user input: What is the average salary by department?
+2025-06-03 02:08:16,043 | llm          | DEBUG    | Calling LLM with model: gemma2-9b-it, temperature: 0.2, max_tokens: 2048
+2025-06-03 02:08:16,043 | llm          | DEBUG    | Message 1 (system): 
+            You are an expert at converting natural language queries into SQL queries.
+            ...
+2025-06-03 02:08:16,043 | llm          | DEBUG    | Message 2 (user): What is the average salary by department?
+2025-06-03 02:08:16,043 | llm          | INFO     | Sending request to Groq API...
+2025-06-03 02:08:16,276 | llm          | INFO     | Received response from Groq API in 0.23s
+2025-06-03 02:08:16,276 | llm          | DEBUG    | Response: SELECT department, AVG(salary) FROM employees GROUP BY department;
+2025-06-03 02:08:16,276 | llm          | DEBUG    | Token usage - Prompt: 447, Completion: 15, Total: 462

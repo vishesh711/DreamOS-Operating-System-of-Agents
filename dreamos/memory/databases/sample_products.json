@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop",
+    "category": "Electronics",
+    "price": 1200,
+    "stock": 45
+  },
+  {
+    "id": 2,
+    "name": "Smartphone",
+    "category": "Electronics",
+    "price": 800,
+    "stock": 75
+  },
+  {
+    "id": 3,
+    "name": "Desk Chair",
+    "category": "Furniture",
+    "price": 250,
+    "stock": 30
+  },
+  {
+    "id": 4,
+    "name": "Coffee Table",
+    "category": "Furniture",
+    "price": 350,
+    "stock": 15
+  },
+  {
+    "id": 5,
+    "name": "Headphones",
+    "category": "Electronics",
+    "price": 150,
+    "stock": 100
+  }
+]

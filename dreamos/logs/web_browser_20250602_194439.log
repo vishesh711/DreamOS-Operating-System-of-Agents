@@ -1,3 +1,0 @@
-2025-06-02 19:44:39,837 | web_browser  | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/web_browser_20250602_194439.log
-2025-06-02 19:45:51,813 | web_browser  | WARNING  | Playwright not available. Please install with: pip install playwright
-2025-06-02 19:45:51,814 | web_browser  | WARNING  | After installation, run: playwright install

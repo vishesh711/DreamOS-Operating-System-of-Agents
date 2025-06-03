@@ -1,89 +1,202 @@
 #!/bin/bash
-# DreamOS Setup Script
+# Setup script for DreamOS
 
-echo "📦 Setting up DreamOS - An Agentic AI Operating System"
-echo "------------------------------------------------------"
+# Print colored messages
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+BLUE='\033[0;34m'
 
-# Check for Python
+print_header() {
+    echo -e "${BLUE}=========================================${NC}"
+    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}=========================================${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}$1${NC}"
+}
+
+# Check if Python 3.8+ is installed
+print_header "Checking Python version"
 if command -v python3 &>/dev/null; then
-    PYTHON="python3"
-elif command -v python &>/dev/null; then
-    PYTHON="python"
+    python_version=$(python3 --version | cut -d' ' -f2)
+    echo "Python version: $python_version"
+    
+    # Extract major and minor version
+    major=$(echo $python_version | cut -d. -f1)
+    minor=$(echo $python_version | cut -d. -f2)
+    
+    if [ "$major" -lt 3 ] || ([ "$major" -eq 3 ] && [ "$minor" -lt 8 ]); then
+        print_error "Python 3.8 or higher is required. Please upgrade your Python installation."
+        exit 1
+    else
+        print_success "Python version is compatible."
+    fi
 else
-    echo "❌ Python not found. Please install Python 3.8 or newer."
+    print_error "Python 3 is not installed. Please install Python 3.8 or higher."
     exit 1
 fi
 
-# Check Python version
-PY_VERSION=$($PYTHON -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-echo "✅ Found Python $PY_VERSION"
-
-# Create virtual environment (optional)
-if [[ "$1" == "--venv" ]]; then
-    echo "🔧 Creating virtual environment..."
-    $PYTHON -m venv venv
-    
-    # Activate virtual environment
-    if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-        source venv/Scripts/activate
-    else
-        source venv/bin/activate
+# Create a virtual environment
+print_header "Setting up virtual environment"
+if [ -d "venv" ]; then
+    print_warning "Virtual environment already exists. Using existing environment."
+else
+    echo "Creating new virtual environment..."
+    python3 -m venv venv
+    if [ $? -ne 0 ]; then
+        print_error "Failed to create virtual environment. Please make sure venv module is installed."
+        exit 1
     fi
-    echo "✅ Virtual environment created and activated"
+    print_success "Virtual environment created successfully."
 fi
 
+# Activate virtual environment
+echo "Activating virtual environment..."
+source venv/bin/activate
+if [ $? -ne 0 ]; then
+    print_error "Failed to activate virtual environment."
+    exit 1
+fi
+print_success "Virtual environment activated."
+
 # Install dependencies
-echo "📥 Installing dependencies..."
-$PYTHON -m pip install -r requirements.txt
+print_header "Installing dependencies"
+echo "Upgrading pip..."
+pip install --upgrade pip
 
-# Set up environment
-echo "🔧 Setting up environment..."
+echo "Installing required packages..."
+pip install -r requirements.txt
+if [ $? -ne 0 ]; then
+    print_error "Failed to install required packages."
+    exit 1
+fi
 
-# Create .env.example file
-echo "📝 Creating .env.example file..."
-cat > .env.example << 'EOL'
+# Check for platform-specific dependencies for voice interface
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    print_header "Checking voice interface dependencies for macOS"
+    if ! command -v brew &>/dev/null; then
+        print_warning "Homebrew is not installed. Voice interface might not work properly."
+        print_warning "Consider installing Homebrew and running: brew install portaudio"
+    else
+        echo "Checking for portaudio..."
+        if brew list portaudio &>/dev/null; then
+            print_success "portaudio is already installed."
+        else
+            echo "Installing portaudio using Homebrew..."
+            brew install portaudio
+            if [ $? -ne 0 ]; then
+                print_warning "Failed to install portaudio. Voice interface might not work properly."
+            else
+                print_success "portaudio installed successfully."
+            fi
+        fi
+    fi
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    print_header "Checking voice interface dependencies for Linux"
+    echo "Checking for portaudio development libraries..."
+    if ! dpkg -l | grep -q libportaudio2; then
+        print_warning "portaudio development libraries not found. Voice interface might not work properly."
+        print_warning "Consider installing them with: sudo apt-get install portaudio19-dev python3-pyaudio"
+    else
+        print_success "portaudio development libraries found."
+    fi
+fi
+
+# Create .env.example file if it doesn't exist
+print_header "Setting up configuration files"
+if [ ! -f ".env.example" ]; then
+    echo "Creating .env.example file..."
+    cat > .env.example << EOF
 # API Keys
 GROQ_API_KEY=your_groq_api_key_here
 
-# Configuration
-VECTOR_DB_PATH=./dreamos/memory/vector_db
-PSEUDO_FILES_PATH=./dreamos/memory/pseudo_files.json
-LOG_DIR=./dreamos/logs
+# Paths
+VECTOR_DB_PATH=dreamos/memory/vector_db
+PSEUDO_FILES_PATH=dreamos/memory/pseudo_files.json
+LOG_DIR=dreamos/logs
 
 # LLM Configuration
-LLM_MODEL=mixtral-8x7b-32768
-# Alternative models: llama3-70b-8192, gemma-7b-it
+LLM_MODEL=llama-3.1-70b-versatile
 
 # Runtime Settings
 DEBUG_MODE=false
-DEFAULT_MEMORY_K=5
-
-# Logging Configuration
-# Levels: DEBUG, INFO, WARNING, ERROR, CRITICAL
 CONSOLE_LOG_LEVEL=INFO
 FILE_LOG_LEVEL=DEBUG
 ENABLE_FILE_LOGGING=true
-EOL
-echo "✅ Created .env.example file"
-
-# Copy to .env if it doesn't exist
-if [ ! -f .env ]; then
-    cp .env.example .env
-    echo "✅ Created .env file from template"
-    echo "⚠️  Please edit .env file to add your Groq API key"
+EOF
+    print_success ".env.example file created."
 else
-    echo "✅ .env file already exists"
+    print_warning ".env.example file already exists. Skipping creation."
+fi
+
+# Create .env file if it doesn't exist
+if [ ! -f ".env" ]; then
+    echo "Creating .env file from .env.example..."
+    cp .env.example .env
+    print_success ".env file created. Please edit it with your API keys and configuration."
+else
+    print_warning ".env file already exists. Skipping creation."
 fi
 
 # Create necessary directories
-echo "📁 Creating necessary directories..."
+print_header "Creating necessary directories"
 mkdir -p dreamos/logs
+mkdir -p dreamos/memory
 mkdir -p dreamos/memory/vector_db
+mkdir -p dreamos/plugins
+mkdir -p dreamos/memory/databases
 
-echo "✅ Setup complete!"
+# Make run_dreamos.py executable
+print_header "Setting up executable"
+chmod +x run_dreamos.py
+print_success "Made run_dreamos.py executable."
+
+# Make voice_test.py executable
+chmod +x voice_test.py
+print_success "Made voice_test.py executable."
+
+# Make data_viz_test.py executable
+chmod +x data_viz_test.py
+print_success "Made data_viz_test.py executable."
+
+# Make db_query_test.py executable
+chmod +x db_query_test.py
+print_success "Made db_query_test.py executable."
+
+# Finished
+print_header "Setup Complete"
+print_success "DreamOS has been set up successfully!"
 echo ""
-echo "🚀 To run DreamOS:"
-echo "   $PYTHON run_dreamos.py"
+echo "To start DreamOS, run:"
+echo "  source venv/bin/activate"
+echo "  ./run_dreamos.py"
 echo ""
-echo "📝 For more options:"
-echo "   $PYTHON run_dreamos.py --help" 
+echo "To use voice interface, run:"
+echo "  ./run_dreamos.py --voice"
+echo ""
+echo "To use data visualization, run:"
+echo "  ./run_dreamos.py --dataviz"
+echo ""
+echo "To test voice interface separately, run:"
+echo "  ./voice_test.py --interactive"
+echo ""
+echo "To test data visualization separately, run:"
+echo "  ./data_viz_test.py --sample"
+echo ""
+echo "To test database querying separately, run:"
+echo "  ./db_query_test.py --sample"
+echo ""
+print_warning "Make sure to edit the .env file with your API keys before running DreamOS." 

@@ -27,6 +27,14 @@ def setup_environment():
     os.makedirs("dreamos/plugins", exist_ok=True)
     logger.debug("Created plugins directory")
     
+    # Create visualizations directory for data viz
+    os.makedirs("dreamos/memory/visualizations", exist_ok=True)
+    logger.debug("Created visualizations directory")
+    
+    # Create databases directory for database queries
+    os.makedirs("dreamos/memory/databases", exist_ok=True)
+    logger.debug("Created databases directory")
+    
     # Create empty plugin config if it doesn't exist
     plugin_config_path = os.path.join("dreamos", "plugins", "plugin_config.json")
     if not os.path.exists(plugin_config_path):
@@ -110,6 +118,9 @@ def main():
     parser = argparse.ArgumentParser(description="DreamOS - An Agentic AI Operating System")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     parser.add_argument("--web", action="store_true", help="Run in web interface mode (not implemented yet)")
+    parser.add_argument("--voice", action="store_true", help="Enable voice interface")
+    parser.add_argument("--dataviz", action="store_true", help="Enable data visualization features")
+    parser.add_argument("--dbquery", action="store_true", help="Enable database querying features")
     parser.add_argument("--log-level", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], 
                         help="Set the console logging level")
     args = parser.parse_args()
@@ -140,12 +151,26 @@ def main():
         logger.info(f"File logging level: {logging.getLevelName(FILE_LOG_LEVEL)}")
         logger.info(f"Log directory: {LOG_DIR}")
     
+    # Log voice interface status
+    if args.voice:
+        logger.info("Voice interface enabled")
+    
+    # Log data visualization status
+    enable_dataviz = args.dataviz or os.environ.get("ENABLE_DATAVIZ") == "true"
+    if enable_dataviz:
+        logger.info("Data visualization features enabled")
+    
+    # Log database querying status
+    enable_dbquery = args.dbquery or os.environ.get("ENABLE_DBQUERY") == "true"
+    if enable_dbquery:
+        logger.info("Database querying features enabled")
+    
     # Set up the environment
     setup_environment()
     
     # Initialize the terminal agent
     logger.info("Initializing Terminal Agent")
-    terminal_agent = TerminalAgent()
+    terminal_agent = TerminalAgent(enable_voice=args.voice)
     
     if args.web:
         logger.warning("Web interface not implemented yet, falling back to CLI mode")
