@@ -191,39 +191,32 @@ class WebBrowserTool:
             }
         
         try:
-            # Determine if this is a URL (for visit action)
-            is_url = False
+            # For explicit "visit" actions or if query looks like a URL
             if action == "visit" or (
                 query.startswith(('http://', 'https://')) or 
-                any(query.startswith(d + '.') for d in ['www', 'youtube', 'github', 'google'])
+                any(query.startswith(d + '.') for d in ['www', 'youtube', 'github', 'google']) or
+                any(domain in query for domain in ['.com', '.org', '.net', '.io', '.gov'])
             ):
-                is_url = True
-                action = "visit"
-            
-            # Run the appropriate async function
-            logger.info(f"Executing web browser {action}: {query}")
-            if action == "visit":
+                # Visit the website
+                logger.info(f"Visiting website: {query}")
                 result = asyncio.run(self._run_visit(query))
-                # Format the results
-                formatted_result = self._format_visit_results(result)
-            else:  # Default to search
+                return {
+                    "status": "success",
+                    "result": self._format_visit_results(result)
+                }
+            else:
+                # Search the web
+                logger.info(f"Searching for: {query}")
                 results = asyncio.run(self._run_search(query))
-                # Format the results
-                formatted_result = self._format_results(results)
-            
-            return {
-                "status": "success",
-                "result": formatted_result,
-                "query": query,
-                "action": action
-            }
+                return {
+                    "status": "success",
+                    "result": self._format_results(results)
+                }
         except Exception as e:
-            logger.error(f"Error executing web browser action: {str(e)}", exc_info=True)
+            logger.error(f"Error executing web browser tool: {str(e)}", exc_info=True)
             return {
                 "status": "error",
-                "error": str(e),
-                "query": query,
-                "action": action
+                "error": f"Web browser error: {str(e)}"
             }
     
     async def _run_search(self, query: str) -> List[Dict[str, str]]:

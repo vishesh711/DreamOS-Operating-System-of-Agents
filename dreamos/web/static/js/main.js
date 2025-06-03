@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const voiceFeature = document.getElementById('voiceFeature');
     const datavizFeature = document.getElementById('datavizFeature');
     const dbqueryFeature = document.getElementById('dbqueryFeature');
+    const stopSpeechBtn = document.getElementById('stopSpeechBtn');
     
     // Socket.IO connection
     const socket = io();
@@ -98,6 +99,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Stop Speech button
+    stopSpeechBtn.addEventListener('click', function() {
+        stopSpeech();
+        updateStatus('info', 'Speech stopped');
+    });
+    
     // Socket.IO event listeners
     socket.on('connect', function() {
         console.log('Connected to server');
@@ -126,6 +133,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close error button
     document.getElementById('closeErrorBtn').addEventListener('click', function() {
         document.getElementById('connectionError').classList.add('d-none');
+    });
+    
+    // Add keyboard shortcut to stop speech (Escape key)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            stopSpeech();
+        }
     });
     
     // Functions
@@ -351,21 +365,49 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function speakText(text) {
         // Use browser's speech synthesis if available
-        // Only use browser speech if we're using browser-only voice (not the agent's voice interface)
         if ('speechSynthesis' in window && isVoiceEnabled) {
-            // Check for browser-only voice mode
-            const isBrowserOnlyVoice = true; // This can be adjusted if we add a setting to distinguish modes
+            // We should use browser speech in the following cases:
+            // 1. When we're using the web interface only (no backend voice)
+            // 2. When we're on a device that doesn't support the pyttsx3 backend
             
-            if (isBrowserOnlyVoice) {
+            // This could be made configurable via a setting in the future
+            const useBrowserSpeech = true;
+            
+            if (useBrowserSpeech) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
                 // Limit text length for speech
                 let speakText = text;
-                if (text.length > 200) {
-                    speakText = text.substring(0, 197) + '...';
+                if (text.length > 300) {
+                    // Speak only first part of very long responses
+                    speakText = text.substring(0, 297) + '...';
                 }
                 
                 const utterance = new SpeechSynthesisUtterance(speakText);
+                
+                // Optional: select voice (can be made configurable in settings)
+                /*
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    // Find a preferred voice (e.g., first English voice)
+                    const englishVoice = voices.find(voice => voice.lang.startsWith('en-'));
+                    if (englishVoice) {
+                        utterance.voice = englishVoice;
+                    }
+                }
+                */
+                
+                // Speak the text
                 window.speechSynthesis.speak(utterance);
             }
+        }
+    }
+    
+    function stopSpeech() {
+        // Cancel any ongoing speech synthesis
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
         }
     }
     

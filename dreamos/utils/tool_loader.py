@@ -134,6 +134,7 @@ class ToolLoader:
         try:
             # Execute the tool
             if hasattr(tool, "execute"):
+                # Pass all arguments to the execute method
                 return tool.execute(*args, **kwargs)
             else:
                 return {
@@ -141,6 +142,10 @@ class ToolLoader:
                     "error": f"Tool '{tool_name}' does not have an execute method"
                 }
         except Exception as e:
+            if DEBUG_MODE:
+                import traceback
+                traceback.print_exc()
+                
             return {
                 "status": "error",
                 "error": str(e)

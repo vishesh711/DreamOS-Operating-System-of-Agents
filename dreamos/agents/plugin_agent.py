@@ -75,14 +75,45 @@ class PluginAgent:
         # Check for URL patterns in the command
         url_patterns = [
             r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?(https?://[\w.-]+\.\w+\S*)",
-            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?([\w.-]+\.\w+\S*)",
-            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?([\w.-]+\.\w+)",
-            r"(?:visit|open|go to|navigate to|browse to) (youtube|facebook|twitter|instagram|google|github)",
+            r"(?:visit|open|go to|navigate to|browse to) (?:the )?(?:website |site |webpage |page )?([\w.-]+\.(?:com|org|net|edu|gov|io|co|info|me|app|dev|ai)\S*)",
+            r"(?:visit|open|go to|navigate to|browse to) (?:(?:the )?(?:website |site |webpage |page )?)?([a-zA-Z0-9][\w.-]*\.[a-zA-Z]{2,}(?:/\S*)?)",
+            r"(?:visit|open|go to|navigate to|browse to) (?:(?:on|in|at|using) )?(?:the )?(youtube|facebook|twitter|instagram|google|github|linkedin|reddit)",
+            r"(?:search|look up|find) (?:for )?(.+?) (?:on|in|at|using) (youtube|google|github|amazon)"
         ]
         
         for pattern in url_patterns:
             match = re.search(pattern, command, re.IGNORECASE)
             if match:
+                # Special case for the last pattern (search on specific site)
+                if len(match.groups()) > 1 and match.group(2) in ["youtube", "google", "github", "amazon"]:
+                    query = match.group(1).strip()
+                    site = match.group(2).strip().lower()
+                    
+                    if site == "youtube":
+                        return {
+                            "tool_name": "web_browser",
+                            "tool_input": f"youtube.com/results?search_query={query.replace(' ', '+')}",
+                            "action": "visit"
+                        }
+                    elif site == "github":
+                        return {
+                            "tool_name": "web_browser",
+                            "tool_input": f"github.com/search?q={query.replace(' ', '+')}",
+                            "action": "visit"
+                        }
+                    elif site == "amazon":
+                        return {
+                            "tool_name": "web_browser",
+                            "tool_input": f"amazon.com/s?k={query.replace(' ', '+')}",
+                            "action": "visit"
+                        }
+                    else:  # Default to Google
+                        return {
+                            "tool_name": "web_browser",
+                            "tool_input": query,
+                            "action": "search"
+                        }
+                
                 url = match.group(1).strip()
                 # For common websites without domain
                 if '.' not in url and not url.startswith('http'):
@@ -136,11 +167,13 @@ class PluginAgent:
             tool_name = parsed_command["tool_name"]
             tool_input = parsed_command["tool_input"]
             
-            # Check if we have specific action for this tool (like visit for web_browser)
-            action = parsed_command.get("action", None)
+            # Extract any additional parameters
+            kwargs = {k: v for k, v in parsed_command.items() 
+                     if k not in ["tool_name", "tool_input"]}
             
-            if action and tool_name == "web_browser":
-                tool_result = self.tool_loader.execute_tool(tool_name, tool_input, action=action)
+            # Execute the tool with all parameters
+            if kwargs:
+                tool_result = self.tool_loader.execute_tool(tool_name, tool_input, **kwargs)
             else:
                 tool_result = self.tool_loader.execute_tool(tool_name, tool_input)
             
