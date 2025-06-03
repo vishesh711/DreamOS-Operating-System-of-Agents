@@ -4,56 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DreamOS Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+        }
+        .card-header {
+            border-radius: 0 !important;
+            background: linear-gradient(to right, rgba(33, 37, 41, 0.05), rgba(33, 37, 41, 0.01));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+        }
+        .sidebar {
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            transition: background-color 0.2s;
+            padding: 12px 15px;
+        }
+        .list-group-item:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+            transform: translateX(3px);
+        }
+        .list-group-item .bi {
+            transition: all 0.2s;
+        }
+        .list-group-item:hover .bi {
+            transform: scale(1.1);
+        }
+        .quick-action-btn {
+            border-radius: 15px;
+            transition: all 0.3s;
+            padding: 1.25rem;
+            font-weight: 500;
+            border-width: 2px;
+        }
+        .quick-action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .quick-action-btn i {
+            transition: all 0.3s;
+        }
+        .quick-action-btn:hover i {
+            transform: scale(1.1);
+        }
+        .status-badge {
+            padding: 10px;
+            width: 70px;
+            border-radius: 20px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .system-status-item {
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.02);
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .system-status-item:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+            transform: translateX(5px);
+        }
+        #dashboard-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        .refresh-icon {
+            transition: transform 0.5s;
+        }
+        .refresh-icon.spinning {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+        }
+        .progress-bar {
+            background: linear-gradient(to right, #4364f7, #6fb1fc);
+        }
+        .btn-outline-primary {
+            border-color: #4364f7;
+            color: #4364f7;
+        }
+        .btn-outline-primary:hover {
+            background-color: #4364f7;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div id="dashboard-loading">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            <p class="mt-3 text-primary fw-bold">Loading Dashboard Data...</p>
+            <div class="progress mt-2" style="width: 200px; height: 4px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 col-lg-2 p-0 bg-dark sidebar">
                 <div class="d-flex flex-column p-3 text-white">
                     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-4">DreamOS</span>
+                        <i class="bi bi-cpu-fill fs-4 me-2 text-info"></i>
+                        <span class="fs-4 fw-bold">DreamOS</span>
                     </a>
                     <hr>
                     <ul class="nav nav-pills flex-column mb-auto">
                         <li class="nav-item">
                             <a href="/" class="nav-link text-white">
-                                <i class="bi bi-terminal"></i> Terminal
+                                <i class="bi bi-terminal-fill me-2"></i> Terminal
                             </a>
                         </li>
                         <li>
                             <a href="/dashboard" class="nav-link active" aria-current="page">
-                                <i class="bi bi-speedometer2"></i> Dashboard
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
                             </a>
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="filesLink">
-                                <i class="bi bi-folder"></i> Files
+                                <i class="bi bi-folder2-open me-2"></i> Files
                             </a>
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="memoriesLink">
-                                <i class="bi bi-brain"></i> Memories
+                                <i class="bi bi-brain me-2"></i> Memories
                             </a>
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="visualizationsLink">
-                                <i class="bi bi-bar-chart"></i> Visualizations
+                                <i class="bi bi-bar-chart-fill me-2"></i> Visualizations
                             </a>
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="databaseLink">
-                                <i class="bi bi-database"></i> Database
+                                <i class="bi bi-database-fill me-2"></i> Database
                             </a>
                         </li>
                         <li>
                             <a href="/settings" class="nav-link text-white">
-                                <i class="bi bi-gear"></i> Settings
+                                <i class="bi bi-gear-fill me-2"></i> Settings
                             </a>
                         </li>
                     </ul>
@@ -75,11 +206,18 @@
             <!-- Main content area -->
             <div class="col-md-10 col-lg-10 ms-sm-auto px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Dashboard</h1>
+                    <h1 class="h2"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn">Refresh</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="fullscreenBtn">Fullscreen</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="refreshBtn">
+                                <i class="bi bi-arrow-repeat me-1 refresh-icon" id="refreshIcon"></i> Refresh
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="fullscreenBtn">
+                                <i class="bi bi-fullscreen me-1"></i> Fullscreen
+                            </button>
+                        </div>
+                        <div class="ms-2">
+                            <span class="badge bg-info px-3 py-2 rounded-pill" id="lastUpdated"></span>
                         </div>
                     </div>
                 </div>
@@ -89,44 +227,45 @@
                     <!-- System Status Card -->
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">System Status</h5>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-info-circle me-2"></i>System Status</h5>
+                                <span class="badge bg-success" id="systemStatusBadge">Online</span>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
+                                <div class="system-status-item d-flex align-items-center mb-3">
                                     <div class="me-3">
-                                        <span class="badge bg-success">Active</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">DreamOS Core</h6>
-                                        <small class="text-muted">Running smoothly</small>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="me-3">
-                                        <span class="badge bg-success" id="memoryStatus">Active</span>
+                                        <span class="badge bg-success status-badge" id="memoryStatus">Active</span>
                                     </div>
                                     <div>
                                         <h6 class="mb-0">Memory Agent</h6>
-                                        <small class="text-muted" id="memoryDetails">1024 memories stored</small>
+                                        <small class="text-muted" id="memoryDetails">Loading...</small>
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center mb-3">
+                                <div class="system-status-item d-flex align-items-center mb-3">
                                     <div class="me-3">
-                                        <span class="badge bg-success" id="fileStatus">Active</span>
+                                        <span class="badge bg-success status-badge" id="fileStatus">Active</span>
                                     </div>
                                     <div>
                                         <h6 class="mb-0">File Agent</h6>
-                                        <small class="text-muted" id="fileDetails">15 files managed</small>
+                                        <small class="text-muted" id="fileDetails">Loading...</small>
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center">
+                                <div class="system-status-item d-flex align-items-center">
                                     <div class="me-3">
-                                        <span class="badge bg-success" id="pluginStatus">Active</span>
+                                        <span class="badge bg-success status-badge" id="pluginStatus">Active</span>
                                     </div>
                                     <div>
                                         <h6 class="mb-0">Plugin Agent</h6>
-                                        <small class="text-muted" id="pluginDetails">6 plugins loaded</small>
+                                        <small class="text-muted" id="pluginDetails">Loading...</small>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>System Uptime</span>
+                                        <span id="systemUptime">--:--:--</span>
+                                    </div>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
@@ -136,38 +275,20 @@
                     <!-- Recent Activity Card -->
                     <div class="col-md-8 mb-4">
                         <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Recent Activity</h5>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-activity me-2"></i>Recent Activity</h5>
+                                <div>
+                                    <span class="badge bg-primary" id="activityCount">0</span>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush" id="activityList">
                                     <li class="list-group-item d-flex justify-content-between align-items-start">
                                         <div class="ms-2 me-auto">
-                                            <div class="fw-bold">Terminal Command</div>
-                                            User executed "help" command
+                                            <div class="fw-bold">Loading activities...</div>
+                                            Please wait while we fetch your recent activities
                                         </div>
-                                        <span class="text-muted small">Just now</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold">File Operation</div>
-                                            Created file "notes.txt"
-                                        </div>
-                                        <span class="text-muted small">5 minutes ago</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold">Memory Storage</div>
-                                            Stored new memory about meeting schedule
-                                        </div>
-                                        <span class="text-muted small">10 minutes ago</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                                        <div class="ms-2 me-auto">
-                                            <div class="fw-bold">Data Visualization</div>
-                                            Created bar chart from provided data
-                                        </div>
-                                        <span class="text-muted small">20 minutes ago</span>
+                                        <span class="text-muted small">-</span>
                                     </li>
                                 </ul>
                             </div>
@@ -179,8 +300,18 @@
                     <!-- Memory Usage Chart -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Memory Usage</h5>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-graph-up me-2"></i>Memory Usage</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="memoryChartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Last 7 Days
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="memoryChartDropdown">
+                                        <li><a class="dropdown-item active" href="#">Last 7 Days</a></li>
+                                        <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+                                        <li><a class="dropdown-item" href="#">All Time</a></li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <canvas id="memoryChart" height="200"></canvas>
@@ -191,8 +322,18 @@
                     <!-- Command Statistics Chart -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Command Statistics</h5>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-pie-chart me-2"></i>Command Statistics</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="commandChartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        All Commands
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="commandChartDropdown">
+                                        <li><a class="dropdown-item active" href="#">All Commands</a></li>
+                                        <li><a class="dropdown-item" href="#">Last 50 Commands</a></li>
+                                        <li><a class="dropdown-item" href="#">Last 10 Commands</a></li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <canvas id="commandChart" height="200"></canvas>
@@ -206,30 +347,30 @@
                     <div class="col-md-12 mb-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title mb-0">Quick Actions</h5>
+                                <h5 class="card-title mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
-                                        <a href="/" class="btn btn-outline-primary w-100 p-3">
+                                        <a href="/" class="btn btn-outline-primary w-100 p-3 quick-action-btn">
                                             <i class="bi bi-terminal fs-3 d-block mb-2"></i>
                                             Terminal
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="createVisualizationBtn">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3 quick-action-btn" id="createVisualizationBtn">
                                             <i class="bi bi-bar-chart fs-3 d-block mb-2"></i>
                                             Create Visualization
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="queryDatabaseBtn">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3 quick-action-btn" id="queryDatabaseBtn">
                                             <i class="bi bi-database fs-3 d-block mb-2"></i>
                                             Query Database
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="#" class="btn btn-outline-primary w-100 p-3" id="createFileBtn">
+                                        <a href="#" class="btn btn-outline-primary w-100 p-3 quick-action-btn" id="createFileBtn">
                                             <i class="bi bi-file-earmark-plus fs-3 d-block mb-2"></i>
                                             Create File
                                         </a>
@@ -247,58 +388,184 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize charts
-            const memoryCtx = document.getElementById('memoryChart').getContext('2d');
-            const memoryChart = new Chart(memoryCtx, {
-                type: 'line',
-                data: {
-                    labels: ['6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Yesterday', 'Today'],
-                    datasets: [{
-                        label: 'Memory Usage',
-                        data: [65, 120, 180, 220, 250, 300, 350],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            const commandCtx = document.getElementById('commandChart').getContext('2d');
-            const commandChart = new Chart(commandCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Terminal', 'File Operations', 'Memory', 'Web Search', 'Visualization', 'Database'],
-                    datasets: [{
-                        data: [30, 20, 15, 12, 10, 13],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(153, 102, 255, 0.7)',
-                            'rgba(255, 159, 64, 0.7)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // Socket.IO connection for real-time updates
+            // Initialize Socket.IO connection
             const socket = io();
             
+            // Charts initialization
+            let memoryChart, commandChart;
+            
+            // Start time for uptime calculation
+            const startTime = new Date();
+            
+            // Refresh uptime display every second
+            setInterval(updateUptime, 1000);
+            
+            // Initialize dashboard
+            initializeDashboard();
+            
+            // Socket.IO event listeners
             socket.on('connect', function() {
                 console.log('Connected to server');
+                fetchDashboardData();
             });
             
             socket.on('dashboard_update', function(data) {
+                console.log('Received dashboard update:', data);
+                updateDashboard(data);
+                hideDashboardLoading();
+            });
+            
+            // Button event listeners
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                showRefreshAnimation();
+                fetchDashboardData();
+            });
+            
+            document.getElementById('fullscreenBtn').addEventListener('click', function() {
+                toggleFullscreen();
+            });
+            
+            document.getElementById('createVisualizationBtn').addEventListener('click', function() {
+                window.location.href = '/?command=viz%20create';
+            });
+            
+            document.getElementById('queryDatabaseBtn').addEventListener('click', function() {
+                window.location.href = '/?command=db%20query';
+            });
+            
+            document.getElementById('createFileBtn').addEventListener('click', function() {
+                window.location.href = '/?command=write';
+            });
+            
+            document.getElementById('filesLink').addEventListener('click', function() {
+                window.location.href = '/?command=list%20files';
+            });
+            
+            document.getElementById('memoriesLink').addEventListener('click', function() {
+                window.location.href = '/?command=memories';
+            });
+            
+            document.getElementById('visualizationsLink').addEventListener('click', function() {
+                window.location.href = '/?command=viz%20help';
+            });
+            
+            document.getElementById('databaseLink').addEventListener('click', function() {
+                window.location.href = '/?command=db%20list';
+            });
+            
+            function initializeDashboard() {
+                // Initialize Memory Chart
+                const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+                memoryChart = new Chart(memoryCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Loading...'],
+                        datasets: [{
+                            label: 'Memory Usage',
+                            data: [0],
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            }
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Memories'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time Period'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Initialize Command Chart
+                const commandCtx = document.getElementById('commandChart').getContext('2d');
+                commandChart = new Chart(commandCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Loading...'],
+                        datasets: [{
+                            data: [1],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                                'rgba(255, 159, 64, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Update the last updated time
+                updateLastUpdated();
+            }
+            
+            function fetchDashboardData() {
+                socket.emit('refresh_dashboard');
+            }
+            
+            function updateDashboard(data) {
+                if (data.status === 'error') {
+                    console.error('Error updating dashboard:', data.message);
+                    return;
+                }
+                
                 // Update system status
                 if (data.system_status) {
                     updateSystemStatus(data.system_status);
@@ -309,30 +576,36 @@
                     updateActivityList(data.activities);
                 }
                 
-                // Update charts
+                // Update memory chart
                 if (data.memory_usage) {
                     updateMemoryChart(data.memory_usage);
                 }
                 
+                // Update command chart
                 if (data.command_stats) {
                     updateCommandChart(data.command_stats);
                 }
-            });
+                
+                // Update the last updated time
+                updateLastUpdated();
+                
+                // Stop refresh animation
+                stopRefreshAnimation();
+            }
             
-            // Functions to update dashboard elements
             function updateSystemStatus(status) {
                 if (status.memory) {
-                    document.getElementById('memoryStatus').className = 'badge ' + (status.memory.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('memoryStatus').className = 'badge status-badge ' + (status.memory.active ? 'bg-success' : 'bg-danger');
                     document.getElementById('memoryDetails').textContent = status.memory.details;
                 }
                 
                 if (status.file) {
-                    document.getElementById('fileStatus').className = 'badge ' + (status.file.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('fileStatus').className = 'badge status-badge ' + (status.file.active ? 'bg-success' : 'bg-danger');
                     document.getElementById('fileDetails').textContent = status.file.details;
                 }
                 
                 if (status.plugin) {
-                    document.getElementById('pluginStatus').className = 'badge ' + (status.plugin.active ? 'bg-success' : 'bg-danger');
+                    document.getElementById('pluginStatus').className = 'badge status-badge ' + (status.plugin.active ? 'bg-success' : 'bg-danger');
                     document.getElementById('pluginDetails').textContent = status.plugin.details;
                 }
             }
@@ -343,13 +616,25 @@
                 // Clear existing activities
                 activityList.innerHTML = '';
                 
+                // Update activity count
+                document.getElementById('activityCount').textContent = activities.length;
+                
                 // Add new activities
                 activities.forEach(activity => {
                     const listItem = document.createElement('li');
                     listItem.className = 'list-group-item d-flex justify-content-between align-items-start';
+                    
+                    // Determine icon based on activity type
+                    let icon = 'terminal';
+                    if (activity.type.includes('File')) icon = 'file-earmark';
+                    if (activity.type.includes('Memory')) icon = 'brain';
+                    if (activity.type.includes('Visual')) icon = 'bar-chart';
+                    if (activity.type.includes('Database')) icon = 'database';
+                    if (activity.type.includes('Web')) icon = 'globe';
+                    
                     listItem.innerHTML = `
                         <div class="ms-2 me-auto">
-                            <div class="fw-bold">${activity.type}</div>
+                            <div class="fw-bold"><i class="bi bi-${icon} me-2"></i>${activity.type}</div>
                             ${activity.description}
                         </div>
                         <span class="text-muted small">${activity.time}</span>
@@ -370,23 +655,51 @@
                 commandChart.update();
             }
             
-            // Button event listeners
-            document.getElementById('refreshBtn').addEventListener('click', function() {
-                // Request fresh data from the server
-                socket.emit('refresh_dashboard');
-            });
+            function updateLastUpdated() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                document.getElementById('lastUpdated').textContent = `Last updated: ${timeString}`;
+            }
             
-            document.getElementById('createVisualizationBtn').addEventListener('click', function() {
-                window.location.href = '/?command=viz%20create';
-            });
+            function updateUptime() {
+                const now = new Date();
+                const diff = now - startTime;
+                
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                
+                const uptimeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('systemUptime').textContent = uptimeString;
+            }
             
-            document.getElementById('queryDatabaseBtn').addEventListener('click', function() {
-                window.location.href = '/?command=db%20query';
-            });
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            }
             
-            document.getElementById('createFileBtn').addEventListener('click', function() {
-                window.location.href = '/?command=write';
-            });
+            function showRefreshAnimation() {
+                const refreshIcon = document.getElementById('refreshIcon');
+                refreshIcon.classList.add('spinning');
+            }
+            
+            function stopRefreshAnimation() {
+                const refreshIcon = document.getElementById('refreshIcon');
+                refreshIcon.classList.remove('spinning');
+            }
+            
+            function showDashboardLoading() {
+                document.getElementById('dashboard-loading').style.display = 'flex';
+            }
+            
+            function hideDashboardLoading() {
+                document.getElementById('dashboard-loading').style.display = 'none';
+            }
         });
     </script>
 </body>

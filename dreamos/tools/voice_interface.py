@@ -76,9 +76,17 @@ class VoiceInterfaceTool:
         """
         logger.info(f"Speaking: '{text[:50]}{'...' if len(text) > 50 else ''}'")
         
+        # Always cancel any current speech first
+        try:
+            self.tts_engine.stop()
+        except Exception:
+            pass  # Ignore any errors when stopping
+            
+        # Set up the new speech
+        self.tts_engine.say(text)
+        
         if wait:
             # Speak and wait until done
-            self.tts_engine.say(text)
             try:
                 self.tts_engine.runAndWait()
             except RuntimeError as e:
@@ -86,7 +94,8 @@ class VoiceInterfaceTool:
                 if "run loop already started" in str(e):
                     logger.warning("Speech synthesis run loop already started, continuing without waiting")
                 else:
-                    logger.error(f"Speech synthesis error: {str(e)}")
+                    # Re-raise other RuntimeErrors
+                    raise
         else:
             # Speak in a separate thread
             threading.Thread(target=self._speak_async, args=(text,), daemon=True).start()

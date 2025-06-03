@@ -11,6 +11,13 @@ DreamOS
 │   ├── tools/                # Tool implementations
 │   ├── utils/                # Utility functions
 │   ├── web/                  # Web interface
+│   │   ├── __init__.py       # Web app initialization
+│   │   ├── routes.py         # HTTP and Socket.IO routes
+│   │   ├── static/           # Static assets
+│   │   │   ├── css/          # Stylesheets
+│   │   │   ├── js/           # JavaScript
+│   │   │   └── img/          # Images and icons
+│   │   └── templates/        # HTML templates
 │   ├── memory/               # Memory storage
 │   ├── plugins/              # Plugin configurations
 │   ├── logs/                 # Log files
@@ -22,7 +29,6 @@ DreamOS
 ├── setup.sh                  # Setup script
 ├── requirements.txt          # Python dependencies
 ├── voice_test.py             # Voice interface test
-├── data_viz_test.py          # Data visualization test
 ├── db_query_test.py          # Database query test
 └── README.md                 # Project documentation
 ```
@@ -98,6 +104,19 @@ DreamOS
    - Function: Implement specific tool capabilities
    - Each has a standardized interface with execute() method
 
+4. **dreamos/tools/voice_interface.py**
+   - Links to: utils/logging_utils.py, pyttsx3, speech_recognition
+   - Function: Provides speech recognition and synthesis
+   - Implements speech overlap prevention
+   - Manages voice preferences and continuous listening
+
+5. **dreamos/tools/web_browser.py**
+   - Links to: utils/logging_utils.py, playwright
+   - Function: Provides web searching and browsing
+   - Handles dependency installation for Playwright
+   - Implements error reporting for missing browser components
+   - Manages web content extraction and summarization
+
 ### Utility Linkages
 
 1. **dreamos/utils/llm_utils.py**
@@ -131,17 +150,31 @@ DreamOS
    - Function: Defines web routes and handlers
    - Initializes terminal agent for web interface
    - Handles Socket.IO events
+   - Manages session-based agent instances
+   - Implements UUID-based session tracking
 
 3. **dreamos/web/templates/**
    - Links to: static/js/main.js, static/css/style.css
    - Function: Provides HTML templates
    - Imports JavaScript and CSS assets
+   - Defines responsive layout with modern UI
 
 4. **dreamos/web/static/js/main.js**
    - Links to: Socket.IO client, web routes
    - Function: Handles client-side functionality
    - Manages Socket.IO communication
    - Handles UI interactions
+   - Implements client-side session storage
+   - Manages browser-based speech synthesis
+   - Prevents speech overlap with cancelation before new speech
+   - Preserves terminal content across page navigation
+
+5. **dreamos/web/static/css/style.css**
+   - Links to: HTML templates
+   - Function: Defines visual styling
+   - Implements transitions and animations
+   - Provides responsive layouts
+   - Enhances UI with visual feedback on interactions
 
 ## Dependency Graph
 
@@ -187,6 +220,21 @@ DreamOS
                    +----------+---------+       |
                    | logging_utils.py   +-------+
                    +--------------------+
+                   
+                   
+                   +------------------------+
+                   |        routes.py       |
+                   +------------+-----------+
+                                |
+                     +----------v-----------+
+                     |   Terminal Agent     |
+                     |    (per session)     |
+                     +------------+---------+
+                                 |
+                     +-----------v-----------+
+                     |     main.js           |
+                     | Session Storage / UI  |
+                     +-----------------------+
 ```
 
 ## Module Interactions and Data Flow
@@ -226,17 +274,24 @@ DreamOS
 
 1. **Client-Server Communication**
    - Client (main.js) sends commands via Socket.IO or API calls
-   - Server (routes.py) receives commands
+   - Server (routes.py) receives commands and checks session ID
 
-2. **Background Processing**
+2. **Session Management**
+   - Server assigns UUID-based session ID if none exists
+   - Server maintains separate terminal agent instance per session
+   - Client stores session state in browser's SessionStorage
+   - Terminal content preserved across page navigation
+
+3. **Background Processing**
    - routes.py creates background thread for command processing
-   - Commands processed by terminal_agent
+   - Commands processed by session-specific terminal_agent
    - Results emitted back via Socket.IO events
 
-3. **Real-time Updates**
+4. **Real-time Updates**
    - Socket.IO events trigger client-side updates
-   - DOM manipulation shows responses
-   - Client-side speech synthesis (if enabled)
+   - DOM manipulation shows responses with animations
+   - Client-side speech synthesis with overlap prevention
+   - UI status indicators provide visual feedback
 
 ## Key Design Patterns
 
@@ -260,6 +315,11 @@ DreamOS
 - Different agents implement different strategies for command handling
 - Different tools implement specialized capabilities with common interface
 
+### Session Pattern
+- UUID-based session tracking for server-side state
+- Browser-based SessionStorage for client-side state
+- Persistent terminal agent instances per user
+
 ## Communication Protocols
 
 ### Internal Communication
@@ -270,7 +330,7 @@ DreamOS
 ### External Communication
 - CLI: Standard input/output
 - Web: HTTP/WebSockets via Flask and Socket.IO
-- Speech: SpeechRecognition and pyttsx3 APIs
+- Speech: SpeechRecognition, pyttsx3, and Web Speech API
 
 ## Data Storage
 
@@ -289,6 +349,11 @@ DreamOS
 - .env file for persistent settings
 - Command-line arguments for runtime options
 
+### Session Storage
+- Server-side: Flask session with UUID tracking
+- Client-side: Browser's SessionStorage API
+- Terminal content persistence between page navigations
+
 ## Error Handling and Logging
 
 ### Comprehensive Logging
@@ -300,6 +365,7 @@ DreamOS
 - Try/except blocks for external API calls
 - Graceful degradation for missing dependencies
 - User-friendly error messages
+- Improved error reporting for browser dependencies
 
 ## Security Considerations
 
@@ -313,10 +379,15 @@ DreamOS
 - .env file for local development
 - No hardcoded credentials
 
+### Session Security
+- UUID-based session tracking
+- Session isolation between users
+- No cross-session data leakage
+
 ## Testing
 
 ### Component Testing
-- Separate test scripts for major components (voice, data viz, db query)
+- Separate test scripts for major components (voice, db query)
 - Utility functions for test data generation
 - Sample data for feature testing
 
@@ -325,8 +396,37 @@ DreamOS
 - Web interface for GUI testing
 - Debug mode for detailed logging
 
+## User Interface Improvements
+
+### Modern Visual Design
+- Enhanced CSS with transitions and animations
+- Responsive layout for different screen sizes
+- Visual feedback on interactive elements
+- Status indicators for system state
+- Loading animations for long-running operations
+
+### Navigation Enhancements
+- Fixed sidebar link functionality
+- Proper favicon implementation
+- Improved dashboard cards and visualizations
+- Smoother page transitions
+
+### Speech Control
+- Browser-side speech synthesis
+- Speech overlap prevention
+- Stop speech button and keyboard shortcuts
+- Visual feedback during speech
+
+### Session Persistence
+- Terminal state preservation across navigation
+- Command history retention
+- Context maintenance between pages
+- Seamless user experience
+
 ## Conclusion
 
 The DreamOS codebase is structured as a modular, interconnected system where files maintain clear responsibilities and interfaces. The multi-agent architecture is reflected in the file organization, with separate directories for agents, tools, and utilities. The system design emphasizes flexibility, extensibility, and maintainability through clear separation of concerns and standardized interfaces.
+
+Recent improvements have significantly enhanced the user experience through session persistence, modern UI design, speech control enhancements, and browser functionality improvements. The implementation of both client-side and server-side session management creates a seamless experience as users navigate between different parts of the system, maintaining context and preserving terminal state.
 
 The command flow moves through well-defined pathways from entry points through the Terminal Agent to specialized agents and tools, with results flowing back through the same channels. This architecture allows for easy addition of new capabilities without modifying core components, and provides a robust foundation for future enhancements. 

@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const dbqueryFeature = document.getElementById('dbqueryFeature');
     const stopSpeechBtn = document.getElementById('stopSpeechBtn');
     
+    // Sidebar links
+    const filesLink = document.getElementById('filesLink');
+    const memoriesLink = document.getElementById('memoriesLink');
+    const visualizationsLink = document.getElementById('visualizationsLink');
+    const databaseLink = document.getElementById('databaseLink');
+    
     // Socket.IO connection
     const socket = io();
     
@@ -26,8 +32,69 @@ document.addEventListener('DOMContentLoaded', function() {
     let isVoiceEnabled = false;
     let isListening = false;
     
-    // Show initialization modal on page load
-    initModal.show();
+    // Session persistence state
+    const SESSION_STORAGE_KEY = 'dreamosSessionState';
+    const TERMINAL_CONTENT_KEY = 'dreamosTerminalContent';
+    
+    // Try to restore session state
+    const restoreSessionState = () => {
+        try {
+            const savedState = sessionStorage.getItem(SESSION_STORAGE_KEY);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                isInitialized = state.isInitialized || false;
+                isVoiceEnabled = state.isVoiceEnabled || false;
+                
+                // Restore UI state
+                voiceToggle.checked = isVoiceEnabled;
+                
+                // If already initialized, don't show the modal
+                if (isInitialized) {
+                    initModal.hide();
+                    updateStatus('success', 'Session restored');
+                    console.log('Session state restored from previous page');
+                    
+                    // Restore terminal content
+                    const savedTerminalContent = sessionStorage.getItem(TERMINAL_CONTENT_KEY);
+                    if (savedTerminalContent) {
+                        terminalOutput.innerHTML = savedTerminalContent;
+                        scrollToBottom();
+                    }
+                } else {
+                    // Show initialization modal if not initialized
+                    initModal.show();
+                }
+            } else {
+                // No saved state, show initialization modal
+                initModal.show();
+            }
+        } catch (error) {
+            console.error('Error restoring session state:', error);
+            initModal.show();
+        }
+    };
+    
+    // Save session state
+    const saveSessionState = () => {
+        try {
+            const state = {
+                isInitialized,
+                isVoiceEnabled
+            };
+            sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state));
+            
+            // Save terminal content
+            sessionStorage.setItem(TERMINAL_CONTENT_KEY, terminalOutput.innerHTML);
+        } catch (error) {
+            console.error('Error saving session state:', error);
+        }
+    };
+    
+    // Restore session when page loads
+    restoreSessionState();
+    
+    // Save session state before leaving the page
+    window.addEventListener('beforeunload', saveSessionState);
     
     // Speech recognition setup (if browser supports it)
     let recognition = null;
@@ -79,6 +146,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (greeting) {
             terminalOutput.appendChild(greeting);
         }
+        
+        // Update saved terminal content
+        saveSessionState();
     });
     
     helpBtn.addEventListener('click', function() {
@@ -89,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     voiceToggle.addEventListener('change', function() {
         isVoiceEnabled = voiceToggle.checked;
         updateStatus('info', isVoiceEnabled ? 'Voice enabled' : 'Voice disabled');
+        saveSessionState();
     });
     
     micBtn.addEventListener('click', function() {
@@ -98,6 +169,55 @@ document.addEventListener('DOMContentLoaded', function() {
             startListening();
         }
     });
+    
+    // Sidebar link event listeners
+    if (filesLink) {
+        filesLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isInitialized) {
+                commandInput.value = 'list files';
+                sendCommand();
+            } else {
+                addSystemMessage('Please initialize DreamOS first', 'error');
+            }
+        });
+    }
+    
+    if (memoriesLink) {
+        memoriesLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isInitialized) {
+                commandInput.value = 'memories';
+                sendCommand();
+            } else {
+                addSystemMessage('Please initialize DreamOS first', 'error');
+            }
+        });
+    }
+    
+    if (visualizationsLink) {
+        visualizationsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isInitialized) {
+                commandInput.value = 'viz list';
+                sendCommand();
+            } else {
+                addSystemMessage('Please initialize DreamOS first', 'error');
+            }
+        });
+    }
+    
+    if (databaseLink) {
+        databaseLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isInitialized) {
+                commandInput.value = 'db list';
+                sendCommand();
+            } else {
+                addSystemMessage('Please initialize DreamOS first', 'error');
+            }
+        });
+    }
     
     // Stop Speech button
     stopSpeechBtn.addEventListener('click', function() {
@@ -173,6 +293,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     .filter(([_, value]) => value)
                                     .map(([key, _]) => key.replace('enable_', ''))
                                     .join(', '));
+                
+                // Save session state after successful initialization
+                saveSessionState();
             } else {
                 updateStatus('error', 'Initialization failed: ' + data.message);
                 addSystemMessage('Initialization failed: ' + data.message, 'error');
@@ -215,6 +338,9 @@ document.addEventListener('DOMContentLoaded', function() {
         terminalOutput.appendChild(processingIndicator);
         scrollToBottom();
         
+        // Save current terminal state
+        saveSessionState();
+        
         // Send command to server with timeout
         const timeoutId = setTimeout(() => {
             // If no response after 15 seconds
@@ -251,6 +377,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isVoiceEnabled && data.response) {
                 speakText(data.response);
             }
+            
+            // Save updated terminal content
+            saveSessionState();
         });
     }
     
@@ -302,6 +431,9 @@ document.addEventListener('DOMContentLoaded', function() {
         systemMessage.textContent = message;
         terminalOutput.appendChild(systemMessage);
         scrollToBottom();
+        
+        // Save updated terminal content
+        saveSessionState();
     }
     
     function updateStatus(type, message) {
@@ -366,41 +498,35 @@ document.addEventListener('DOMContentLoaded', function() {
     function speakText(text) {
         // Use browser's speech synthesis if available
         if ('speechSynthesis' in window && isVoiceEnabled) {
-            // We should use browser speech in the following cases:
-            // 1. When we're using the web interface only (no backend voice)
-            // 2. When we're on a device that doesn't support the pyttsx3 backend
+            // Always cancel any ongoing speech first
+            window.speechSynthesis.cancel();
             
-            // This could be made configurable via a setting in the future
-            const useBrowserSpeech = true;
-            
-            if (useBrowserSpeech) {
-                // Cancel any ongoing speech
-                window.speechSynthesis.cancel();
-                
-                // Limit text length for speech
-                let speakText = text;
-                if (text.length > 300) {
-                    // Speak only first part of very long responses
-                    speakText = text.substring(0, 297) + '...';
-                }
-                
-                const utterance = new SpeechSynthesisUtterance(speakText);
-                
-                // Optional: select voice (can be made configurable in settings)
-                /*
-                const voices = window.speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                    // Find a preferred voice (e.g., first English voice)
-                    const englishVoice = voices.find(voice => voice.lang.startsWith('en-'));
-                    if (englishVoice) {
-                        utterance.voice = englishVoice;
-                    }
-                }
-                */
-                
-                // Speak the text
-                window.speechSynthesis.speak(utterance);
+            // Limit text length for speech
+            let speakText = text;
+            if (text.length > 200) {
+                speakText = text.substring(0, 197) + '...';
             }
+            
+            // Create a new utterance
+            const utterance = new SpeechSynthesisUtterance(speakText);
+            
+            // Set voice if available
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {
+                // Prefer a natural sounding voice
+                const preferredVoice = voices.find(voice => 
+                    voice.name.includes('Samantha') || 
+                    voice.name.includes('Google') || 
+                    voice.name.includes('Natural')
+                );
+                
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+            }
+            
+            // Speak the text
+            window.speechSynthesis.speak(utterance);
         }
     }
     

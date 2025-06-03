@@ -27,12 +27,13 @@ class TerminalAgent:
     Routes commands to appropriate specialized agents.
     """
     
-    def __init__(self, enable_voice: bool = False):
+    def __init__(self, enable_voice: bool = False, web_mode: bool = False):
         """
         Initialize the Terminal Agent and its sub-agents.
         
         Args:
             enable_voice: Whether to enable voice interface
+            web_mode: Whether this agent is running in web mode (prevents server-side speech)
         """
         logger.info("Initializing Terminal Agent and sub-agents")
         
@@ -51,6 +52,7 @@ class TerminalAgent:
         self.voice_enabled = enable_voice
         self.voice_listening = False
         self.voice_listening_thread = None
+        self.web_mode = web_mode
         
         if self.voice_enabled:
             try:
@@ -131,8 +133,9 @@ class TerminalAgent:
         agent_type, agent_response = self._route_command(command)
         logger.info(f"Command handled by {agent_type}")
         
-        # Speak the response if voice is enabled
-        if self.voice_enabled and self.voice_interface:
+        # Speak the response if voice is enabled and not in web mode
+        # (In web mode, the browser handles speech synthesis)
+        if self.voice_enabled and self.voice_interface and not self.web_mode:
             try:
                 # Speak a shortened version if too long
                 speak_text = agent_response

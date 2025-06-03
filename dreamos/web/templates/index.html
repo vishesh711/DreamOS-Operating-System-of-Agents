@@ -18,13 +18,14 @@
             <div class="col-md-2 col-lg-2 p-0 bg-dark sidebar">
                 <div class="d-flex flex-column p-3 text-white">
                     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-4">DreamOS</span>
+                        <i class="bi bi-cpu-fill fs-4 me-2 text-info"></i>
+                        <span class="fs-4 fw-bold">DreamOS</span>
                     </a>
                     <hr>
                     <ul class="nav nav-pills flex-column mb-auto">
                         <li class="nav-item">
                             <a href="/" class="nav-link active" aria-current="page">
-                                <i class="bi bi-terminal"></i> Terminal
+                                <i class="bi bi-terminal-fill"></i> Terminal
                             </a>
                         </li>
                         <li>
@@ -34,7 +35,7 @@
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="filesLink">
-                                <i class="bi bi-folder"></i> Files
+                                <i class="bi bi-folder2-open"></i> Files
                             </a>
                         </li>
                         <li>
@@ -44,17 +45,17 @@
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="visualizationsLink">
-                                <i class="bi bi-bar-chart"></i> Visualizations
+                                <i class="bi bi-bar-chart-fill"></i> Visualizations
                             </a>
                         </li>
                         <li>
                             <a href="#" class="nav-link text-white" id="databaseLink">
-                                <i class="bi bi-database"></i> Database
+                                <i class="bi bi-database-fill"></i> Database
                             </a>
                         </li>
                         <li>
                             <a href="/settings" class="nav-link text-white">
-                                <i class="bi bi-gear"></i> Settings
+                                <i class="bi bi-gear-fill"></i> Settings
                             </a>
                         </li>
                     </ul>
@@ -76,17 +77,21 @@
             <!-- Main content area -->
             <div class="col-md-10 col-lg-10 ms-sm-auto px-md-4 main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">DreamOS Terminal</h1>
+                    <h1 class="h2"><i class="bi bi-terminal-fill me-2 text-primary"></i>DreamOS Terminal</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="clearBtn">Clear</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" id="helpBtn">Help</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="clearBtn">
+                                <i class="bi bi-trash me-1"></i>Clear
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="helpBtn">
+                                <i class="bi bi-question-circle me-1"></i>Help
+                            </button>
                         </div>
                         <div class="form-check form-switch ms-2 d-flex align-items-center">
-                            <input class="form-check-input" type="checkbox" id="voiceToggle">
-                            <label class="form-check-label" for="voiceToggle">Voice</label>
-                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" id="stopSpeechBtn" title="Stop Speech">
-                                <i class="bi bi-volume-mute"></i>
+                            <input class="form-check-input me-1" type="checkbox" id="voiceToggle">
+                            <label class="form-check-label me-2" for="voiceToggle">Voice</label>
+                            <button type="button" class="btn btn-sm btn-outline-danger" id="stopSpeechBtn" title="Stop Speech">
+                                <i class="bi bi-volume-mute-fill"></i>
                             </button>
                         </div>
                     </div>
@@ -107,16 +112,18 @@
     An Agentic AI Operating System
     Type 'help' for available commands.
                             </pre>
-                            <p>Welcome to DreamOS Web Interface! Enter a command below to get started.</p>
+                            <p>Welcome to <span class="fw-bold text-info">DreamOS Web Interface!</span> Enter a command below to get started.</p>
                         </div>
                     </div>
                     <div class="terminal-input-container">
                         <div class="input-group">
-                            <span class="input-group-text">&gt;</span>
-                            <input type="text" class="form-control" id="commandInput" placeholder="Enter a command...">
-                            <button class="btn btn-primary" type="button" id="sendBtn">Send</button>
-                            <button class="btn btn-outline-secondary" type="button" id="micBtn">
-                                <i class="bi bi-mic"></i>
+                            <span class="input-group-text bg-dark text-light border-0">&gt;</span>
+                            <input type="text" class="form-control" id="commandInput" placeholder="Enter a command..." autofocus>
+                            <button class="btn btn-primary" type="button" id="sendBtn">
+                                <i class="bi bi-send-fill me-1"></i>Send
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" id="micBtn" title="Voice Input">
+                                <i class="bi bi-mic-fill"></i>
                             </button>
                         </div>
                     </div>
@@ -125,17 +132,19 @@
                 <!-- Status bar -->
                 <div class="status-bar mt-3">
                     <div class="row">
-                        <div class="col">
-                            <span id="statusIndicator" class="badge bg-success">Ready</span>
+                        <div class="col d-flex align-items-center">
+                            <span id="statusIndicator" class="badge bg-success me-2">Ready</span>
+                            <span class="text-muted small">DreamOS is ready for your commands</span>
                         </div>
                         <div class="col text-end">
-                            <small id="timestamp">Last update: <span id="lastUpdateTime">Never</span></small>
+                            <small class="text-muted">Last update: <span id="lastUpdateTime" class="fw-bold">Never</span></small>
                         </div>
                     </div>
                 </div>
 
                 <!-- Connection error alert -->
                 <div class="alert alert-danger mt-3 d-none" role="alert" id="connectionError">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <strong>Connection Error</strong> - Lost connection to the DreamOS server. Please refresh the page to reconnect.
                     <button type="button" class="btn-close float-end" aria-label="Close" id="closeErrorBtn"></button>
                 </div>
@@ -148,28 +157,56 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="initModalLabel">Initialize DreamOS</h5>
+                    <h5 class="modal-title" id="initModalLabel">
+                        <i class="bi bi-cpu-fill me-2"></i>Initialize DreamOS
+                    </h5>
                 </div>
                 <div class="modal-body">
-                    <p>Select the features you want to enable:</p>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="voiceFeature">
-                        <label class="form-check-label" for="voiceFeature">Voice Interface</label>
-                        <small class="form-text text-muted d-block">Enable speech recognition and text-to-speech</small>
+                    <p class="lead mb-4">Select the features you want to enable:</p>
+                    
+                    <div class="feature-option mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="voiceFeature" checked>
+                            <label class="form-check-label fw-bold" for="voiceFeature">Voice Interface</label>
+                        </div>
+                        <div class="ms-4">
+                            <small class="form-text text-muted d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Enable speech recognition and text-to-speech capabilities
+                            </small>
+                        </div>
                     </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="datavizFeature">
-                        <label class="form-check-label" for="datavizFeature">Data Visualization</label>
-                        <small class="form-text text-muted d-block">Enable chart creation and data visualization</small>
+                    
+                    <div class="feature-option mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="datavizFeature" checked>
+                            <label class="form-check-label fw-bold" for="datavizFeature">Data Visualization</label>
+                        </div>
+                        <div class="ms-4">
+                            <small class="form-text text-muted d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Enable chart creation and data visualization tools
+                            </small>
+                        </div>
                     </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="dbqueryFeature">
-                        <label class="form-check-label" for="dbqueryFeature">Database Querying</label>
-                        <small class="form-text text-muted d-block">Enable natural language database queries</small>
+                    
+                    <div class="feature-option mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="dbqueryFeature" checked>
+                            <label class="form-check-label fw-bold" for="dbqueryFeature">Database Querying</label>
+                        </div>
+                        <div class="ms-4">
+                            <small class="form-text text-muted d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Enable natural language database queries
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="initButton">Initialize</button>
+                    <button type="button" class="btn btn-primary px-4" id="initButton">
+                        <i class="bi bi-lightning-fill me-1"></i>Initialize
+                    </button>
                 </div>
             </div>
         </div>

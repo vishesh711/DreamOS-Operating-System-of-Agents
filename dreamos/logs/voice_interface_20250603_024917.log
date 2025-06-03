@@ -1,8 +1,0 @@
-2025-06-03 02:49:17,547 | voice_interface | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/voice_interface_20250603_024917.log
-2025-06-03 02:49:26,332 | voice_interface | DEBUG    | Initializing text-to-speech engine
-2025-06-03 02:49:26,922 | voice_interface | DEBUG    | No female voice found, using default voice
-2025-06-03 02:49:26,922 | voice_interface | DEBUG    | Initializing speech recognition
-2025-06-03 02:49:26,922 | voice_interface | INFO     | Voice interface initialized
-2025-06-03 02:49:33,753 | voice_interface | INFO     | Speaking: 'Hello! I am doing well, thank you for asking. 
-
-Is...'
