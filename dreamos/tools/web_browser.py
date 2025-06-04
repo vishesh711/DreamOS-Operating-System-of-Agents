@@ -16,6 +16,7 @@ except ImportError:
     PLAYWRIGHT_AVAILABLE = False
 
 from ..utils.logging_utils import get_logger
+from ..utils.metrics import track_tool_usage
 
 # Initialize logger
 logger = get_logger("web_browser")
@@ -173,6 +174,7 @@ class WebBrowserTool:
                 "url": url
             }
 
+    @track_tool_usage("web_browser")
     def execute(self, query: str, action: str = "search") -> Dict[str, Any]:
         """
         Execute a web browser action.

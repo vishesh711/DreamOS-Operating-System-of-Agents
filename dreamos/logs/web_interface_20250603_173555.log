@@ -1,0 +1,12 @@
+2025-06-03 17:35:55,272 | web_interface | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/web_interface_20250603_173555.log
+2025-06-03 17:36:04,185 | web_interface | INFO     | New session created: 6d3f43e1-53a1-44b7-80e4-ff7fc85ddabe
+2025-06-03 17:36:04,336 | web_interface | INFO     | Client connected: 4n0xIt42IvR-mA8hAAAB
+2025-06-03 17:36:05,744 | web_interface | INFO     | Initializing Terminal Agent for session 6d3f43e1-53a1-44b7-80e4-ff7fc85ddabe
+2025-06-03 17:36:06,573 | web_interface | INFO     | Terminal Agent initialized successfully for session 6d3f43e1-53a1-44b7-80e4-ff7fc85ddabe
+2025-06-03 17:36:08,112 | web_interface | INFO     | Client disconnected: 4n0xIt42IvR-mA8hAAAB
+2025-06-03 17:36:08,168 | web_interface | INFO     | Client connected: vwguznYhtJS3s89QAAAD
+2025-06-03 17:36:10,319 | web_interface | INFO     | Client disconnected: vwguznYhtJS3s89QAAAD
+2025-06-03 17:36:10,475 | web_interface | INFO     | Client connected: 2wziIzlasOU8IuhQAAAF
+2025-06-03 17:36:20,491 | web_interface | INFO     | Client disconnected: 2wziIzlasOU8IuhQAAAF
+2025-06-03 17:36:20,540 | web_interface | INFO     | Client connected: ENqdibFt6Cliy89wAAAH
+2025-06-03 17:36:24,386 | web_interface | INFO     | Client disconnected: ENqdibFt6Cliy89wAAAH

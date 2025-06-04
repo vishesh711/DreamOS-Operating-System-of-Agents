@@ -12,6 +12,7 @@ import logging
 from .agents.terminal_agent import TerminalAgent
 from .config import DEBUG_MODE, LOG_DIR, CONSOLE_LOG_LEVEL, FILE_LOG_LEVEL, ENABLE_FILE_LOGGING
 from .utils.logging_utils import setup_logger, get_logger
+from .utils.metrics import MetricsTracker
 
 # Initialize main logger
 logger = get_logger("main")
@@ -35,6 +36,10 @@ def setup_environment():
     os.makedirs("dreamos/memory/databases", exist_ok=True)
     logger.debug("Created databases directory")
     
+    # Create metrics directory for performance metrics
+    os.makedirs("dreamos/memory/metrics", exist_ok=True)
+    logger.debug("Created metrics directory")
+    
     # Create empty plugin config if it doesn't exist
     plugin_config_path = os.path.join("dreamos", "plugins", "plugin_config.json")
     if not os.path.exists(plugin_config_path):
@@ -45,6 +50,10 @@ def setup_environment():
     # Create logs directory
     os.makedirs(LOG_DIR, exist_ok=True)
     logger.debug(f"Created logs directory at {LOG_DIR}")
+    
+    # Initialize metrics tracker
+    MetricsTracker()
+    logger.debug("Initialized metrics tracker")
     
     logger.info("Environment setup complete")
 

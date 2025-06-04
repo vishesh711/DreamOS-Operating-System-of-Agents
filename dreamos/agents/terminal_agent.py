@@ -11,6 +11,7 @@ import os
 from ..config import SYSTEM_PROMPTS, DEBUG_MODE
 from ..utils.llm_utils import generate_agent_response
 from ..utils.logging_utils import get_logger
+from ..utils.metrics import track_execution_time, MetricsTracker
 from .file_agent import FileAgent
 from .memory_agent import MemoryAgent
 from .plugin_agent import PluginAgent
@@ -90,6 +91,7 @@ class TerminalAgent:
         
         logger.info("Terminal Agent initialization complete")
     
+    @track_execution_time("terminal_agent")
     def process_command(self, command: str) -> str:
         """
         Process a user command.
@@ -162,6 +164,7 @@ class TerminalAgent:
         
         return agent_response
     
+    @track_execution_time("terminal_agent")
     def _handle_voice_command(self, voice_cmd: str) -> str:
         """
         Handle voice interface commands.
@@ -274,15 +277,16 @@ class TerminalAgent:
         
         logger.debug("Continuous listening thread ended")
     
+    @track_execution_time("terminal_agent")
     def _route_command(self, command: str) -> Tuple[str, str]:
         """
-        Route a command to the appropriate agent.
+        Route a command to the appropriate agent based on its content.
         
         Args:
-            command: The user's command
+            command: The user command
             
         Returns:
-            Tuple of (agent_type, agent_response)
+            A tuple of (agent_type, response)
         """
         logger.debug("Getting memory context for routing")
         # Get recent context from memory
@@ -382,16 +386,17 @@ class TerminalAgent:
         logger.debug(f"Memory context created, length: {len(context)} chars")
         return context
     
+    @track_execution_time("terminal_agent")
     def _handle_terminal_command(self, command: str, context: Optional[str] = None) -> str:
         """
-        Handle commands meant for the terminal agent itself.
+        Handle general terminal commands using the LLM.
         
         Args:
-            command: The command to handle
-            context: Additional context
+            command: The user command
+            context: Optional context from memory
             
         Returns:
-            Response string
+            Response to the user
         """
         logger.debug(f"Handling terminal command: '{command}'")
         
@@ -526,6 +531,7 @@ System is running normally.
         
         return status_text
     
+    @track_execution_time("terminal_agent")
     def _handle_data_viz_command(self, viz_cmd: str) -> str:
         """
         Handle data visualization commands.
@@ -534,7 +540,7 @@ System is running normally.
             viz_cmd: The visualization command (without the 'viz ' prefix)
             
         Returns:
-            Response message
+            Response message with visualization results
         """
         logger.info(f"Handling data visualization command: '{viz_cmd}'")
         
@@ -650,15 +656,16 @@ viz help
             logger.error(f"Error handling data visualization command: {str(e)}", exc_info=True)
             return f"Error handling data visualization command: {str(e)}"
     
+    @track_execution_time("terminal_agent")
     def _handle_db_query_command(self, db_cmd: str) -> str:
         """
         Handle database query commands.
         
         Args:
-            db_cmd: The database query command (without the 'db ' prefix)
+            db_cmd: The database command (without the 'db ' prefix)
             
         Returns:
-            Response message
+            Response message with query results
         """
         logger.info(f"Handling database query command: '{db_cmd}'")
         

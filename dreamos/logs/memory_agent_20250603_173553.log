@@ -1,0 +1,6 @@
+2025-06-03 17:35:53,859 | memory_agent | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/memory_agent_20250603_173553.log
+2025-06-03 17:36:05,745 | memory_agent | INFO     | Initializing Memory Agent
+2025-06-03 17:36:05,745 | memory_agent | DEBUG    | Initializing vector store
+2025-06-03 17:36:05,749 | memory_agent | INFO     | Memory Agent initialized with 117 memories
+2025-06-03 17:36:08,180 | memory_agent | INFO     | Getting all memories
+2025-06-03 17:36:08,181 | memory_agent | DEBUG    | Retrieved 117 memories

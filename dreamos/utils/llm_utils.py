@@ -9,6 +9,7 @@ from groq import Groq
 
 from ..config import GROQ_API_KEY, LLM_MODEL, DEBUG_MODE, CONSOLE_LOG_LEVEL, FILE_LOG_LEVEL, ENABLE_FILE_LOGGING
 from .logging_utils import get_logger
+from .metrics import track_llm_latency, MetricsTracker
 
 # Initialize logger
 logger = get_logger("llm")
@@ -22,6 +23,7 @@ if not GROQ_API_KEY:
 groq_client = Groq(api_key=GROQ_API_KEY)
 logger.info(f"Initialized Groq client with model: {LLM_MODEL}")
 
+@track_llm_latency("gemma2-9b-it")
 def call_llm(
     messages: List[Dict[str, str]],
     model: Optional[str] = None,

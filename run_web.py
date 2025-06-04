@@ -38,11 +38,17 @@ def main():
     from dreamos.utils.logging_utils import setup_logger
     logger = setup_logger("web_runner")
     
+    # Initialize metrics tracker
+    from dreamos.utils.metrics import MetricsTracker
+    MetricsTracker()
+    logger.info("Initialized metrics tracker")
+    
     # Create necessary directories
     os.makedirs("dreamos/memory", exist_ok=True)
     os.makedirs("dreamos/plugins", exist_ok=True)
     os.makedirs("dreamos/memory/visualizations", exist_ok=True)
     os.makedirs("dreamos/memory/databases", exist_ok=True)
+    os.makedirs("dreamos/memory/metrics", exist_ok=True)
     os.makedirs("dreamos/logs", exist_ok=True)
     
     # Log startup information

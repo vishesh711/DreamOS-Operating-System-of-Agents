@@ -1,0 +1,12 @@
+2025-06-03 17:35:54,901 | terminal_agent | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/terminal_agent_20250603_173554.log
+2025-06-03 17:36:05,744 | terminal_agent | INFO     | Initializing Terminal Agent and sub-agents
+2025-06-03 17:36:05,744 | terminal_agent | DEBUG    | Initializing File Agent
+2025-06-03 17:36:05,745 | terminal_agent | DEBUG    | Initializing Memory Agent
+2025-06-03 17:36:05,750 | terminal_agent | DEBUG    | Initializing Plugin Agent
+2025-06-03 17:36:05,752 | terminal_agent | INFO     | Initializing Voice Interface
+2025-06-03 17:36:06,573 | terminal_agent | INFO     | Voice Interface initialized successfully
+2025-06-03 17:36:06,573 | terminal_agent | DEBUG    | Initializing Data Visualization Tool
+2025-06-03 17:36:06,573 | terminal_agent | DEBUG    | Data Visualization Tool initialized successfully
+2025-06-03 17:36:06,573 | terminal_agent | DEBUG    | Initializing Database Query Tool
+2025-06-03 17:36:06,573 | terminal_agent | DEBUG    | Database Query Tool initialized successfully
+2025-06-03 17:36:06,573 | terminal_agent | INFO     | Terminal Agent initialization complete

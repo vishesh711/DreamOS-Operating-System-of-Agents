@@ -1,3 +1,0 @@
-2025-06-03 15:03:43,289 | web_runner   | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/web_runner_20250603_150343.log
-2025-06-03 15:03:43,290 | web_runner   | INFO     | Starting DreamOS Web Interface on 127.0.0.1:5000
-2025-06-03 15:03:43,290 | web_runner   | INFO     | Debug mode: False

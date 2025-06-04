@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from dreamos.agents.terminal_agent import TerminalAgent
 from dreamos.utils.logging_utils import get_logger
+from dreamos.utils.metrics import MetricsTracker
 
 # Initialize logger
 logger = get_logger("web_interface")
@@ -483,4 +484,69 @@ def handle_dashboard_refresh():
         socketio.emit('dashboard_update', {
             'status': 'error',
             'message': f"Error refreshing dashboard: {str(e)}"
-        }, room=request.sid) 
+        }, room=request.sid)
+
+@app.route('/api/metrics')
+def get_metrics():
+    """Get system performance metrics."""
+    try:
+        # Get the time range from query parameters (default to 60 minutes)
+        time_range = request.args.get('time_range', default=60, type=int)
+        
+        # Validate and limit time range
+        if time_range < 1:
+            time_range = 1
+        elif time_range > 1440:  # Max 24 hours
+            time_range = 1440
+            
+        # Get metrics from the tracker
+        metrics = MetricsTracker()
+        metrics_data = metrics.get_all_metrics(time_range_minutes=time_range)
+        
+        return jsonify({
+            'status': 'success',
+            'time_range_minutes': time_range,
+            'metrics': metrics_data
+        })
+    
+    except Exception as e:
+        logger.error(f"Error retrieving metrics: {str(e)}", exc_info=True)
+        return jsonify({
+            'status': 'error',
+            'message': f"Error retrieving metrics: {str(e)}"
+        }), 500
+
+@socketio.on('refresh_metrics')
+def handle_metrics_refresh():
+    """Handle refreshing metrics data via WebSocket."""
+    try:
+        # Default to 60 minutes time range
+        time_range = 60
+        
+        # Get metrics
+        metrics = MetricsTracker()
+        metrics_data = metrics.get_all_metrics(time_range_minutes=time_range)
+        
+        # Emit metrics to client
+        socketio.emit('metrics_update', {
+            'status': 'success',
+            'time_range_minutes': time_range,
+            'metrics': metrics_data
+        }, room=request.sid)
+    
+    except Exception as e:
+        logger.error(f"Error refreshing metrics: {str(e)}", exc_info=True)
+        socketio.emit('metrics_update', {
+            'status': 'error',
+            'message': f"Error refreshing metrics: {str(e)}"
+        }, room=request.sid)
+
+@app.route('/metrics')
+def metrics():
+    """Render the metrics dashboard."""
+    # Ensure session ID exists
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid.uuid4())
+        logger.info(f"New session created: {session['session_id']}")
+        
+    return render_template('metrics.html') 

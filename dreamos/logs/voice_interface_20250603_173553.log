@@ -1,0 +1,5 @@
+2025-06-03 17:35:53,941 | voice_interface | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/voice_interface_20250603_173553.log
+2025-06-03 17:36:05,752 | voice_interface | DEBUG    | Initializing text-to-speech engine
+2025-06-03 17:36:06,572 | voice_interface | DEBUG    | No female voice found, using default voice
+2025-06-03 17:36:06,572 | voice_interface | DEBUG    | Initializing speech recognition
+2025-06-03 17:36:06,572 | voice_interface | INFO     | Voice interface initialized

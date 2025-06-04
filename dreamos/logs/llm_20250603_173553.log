@@ -1,0 +1,2 @@
+2025-06-03 17:35:53,680 | llm          | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/llm_20250603_173553.log
+2025-06-03 17:35:53,692 | llm          | INFO     | Initialized Groq client with model: mixtral-8x7b-32768

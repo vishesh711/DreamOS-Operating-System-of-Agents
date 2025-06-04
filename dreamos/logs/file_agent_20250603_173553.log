@@ -1,0 +1,10 @@
+2025-06-03 17:35:53,693 | file_agent   | INFO     | Logging to file: /Users/vishesh/Documents/Github/DreamOS-Operating-System-of-Agents/dreamos/logs/file_agent_20250603_173553.log
+2025-06-03 17:36:05,744 | file_agent   | INFO     | Initializing File Agent
+2025-06-03 17:36:05,744 | file_agent   | DEBUG    | Using pseudo files path: ./dreamos/memory/pseudo_files.json
+2025-06-03 17:36:05,744 | file_agent   | DEBUG    | Loading filesystem from ./dreamos/memory/pseudo_files.json
+2025-06-03 17:36:05,744 | file_agent   | INFO     | Filesystem file not found at ./dreamos/memory/pseudo_files.json. Creating new one.
+2025-06-03 17:36:05,745 | file_agent   | INFO     | Creating default filesystem
+2025-06-03 17:36:05,745 | file_agent   | DEBUG    | Created default filesystem with 2 files
+2025-06-03 17:36:05,745 | file_agent   | INFO     | Loaded virtual filesystem with 2 files
+2025-06-03 17:36:08,181 | file_agent   | INFO     | Listing all files
+2025-06-03 17:36:08,181 | file_agent   | DEBUG    | Found 2 files
