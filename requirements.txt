@@ -23,4 +23,6 @@ sqlparse>=0.5.3
 tabulate>=0.9.0
 Flask>=3.1.1
 Flask-SocketIO>=5.5.1
-psutil>=5.9.0 
+psutil>=5.9.0
+eventlet>=0.33.3
+gunicorn>=21.2.0 
