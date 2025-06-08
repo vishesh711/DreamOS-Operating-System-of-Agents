@@ -15,6 +15,10 @@ if 'SECRET_KEY' not in os.environ:
     os.environ['SECRET_KEY'] = 'dreamos-vercel-deployment-secret'
     print("Warning: Using default SECRET_KEY. Set a proper SECRET_KEY in environment variables.")
     
+# Set environment flag to disable audio features in Vercel environment
+os.environ["DISABLE_AUDIO"] = "true"
+print("Audio features disabled in Vercel environment")
+    
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 

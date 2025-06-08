@@ -14,7 +14,8 @@ tqdm>=4.66.1
 colorama>=0.4.6
 SpeechRecognition>=3.10.0
 pyttsx3>=2.98
-PyAudio>=0.2.14
+# Commenting out PyAudio as it requires portaudio which isn't available in Vercel's build environment
+# PyAudio>=0.2.14
 scipy>=1.11.3
 matplotlib>=3.8.2
 pandas>=2.1.4
